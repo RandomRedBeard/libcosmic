@@ -40,6 +40,7 @@ int main() {
   cosmic_list_add(l, COSMIC_ANY(strdup("Thomas also neat")));
   cosmic_list_insert(l, 0, COSMIC_ANY(strdup("FIRST")));
   cosmic_list_insert(l, 1, COSMIC_ANY(strdup("SECOND")));
+  cosmic_list_insert(l, cosmic_list_size(l), COSMIC_ANY(strdup("LAST")));
 
   printf("%lu\n", cosmic_list_size(l));
 
@@ -48,6 +49,10 @@ int main() {
   cosmic_list_remove(l, 2, &o);
   printf("Removed %s\n", o.cp);
   free(o.cp);
+
+  print_list(l);
+
+  cosmic_list_add(l, COSMIC_ANY(strdup("append")));
 
   print_list(l);
 

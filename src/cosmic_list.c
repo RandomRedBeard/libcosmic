@@ -113,6 +113,7 @@ int cosmic_list_insert(cosmic_list_t *l, size_t i, cosmic_any_t o) {
     prev->next = n;
   }
 
+  // Tail check
   if (prev == l->tail) {
     l->tail = n;
   }
