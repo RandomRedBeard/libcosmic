@@ -1,4 +1,4 @@
-#include <assert.h>
+#include "test_base.h"
 #include <cosmic/cosmic_list.h>
 #include <stdio.h>
 #include <string.h>
@@ -7,7 +7,10 @@ cosmic_any_t cany_str(const char *c) { return COSMIC_ANY(strdup(c)); }
 
 void cany_free(cosmic_any_t o) { free(o.vp); }
 
-void check_str(cosmic_any_t o, const char *c) { assert(strcmp(o.cp, c) == 0); }
+void check_str(cosmic_any_t o, const char *c) {
+  printf("Checking %s - %s\n", o.cp, c);
+  assert(strcmp(o.cp, c) == 0);
+}
 
 void get_and_check(cosmic_list_t *l, size_t i, const char *c) {
   cosmic_any_t o;

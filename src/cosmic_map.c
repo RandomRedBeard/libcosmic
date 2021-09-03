@@ -23,8 +23,7 @@ struct cosmic_iterator {
 };
 
 struct cosmic_map_node *cosmic_map_node_new(cosmic_any_t k, cosmic_any_t v) {
-  struct cosmic_map_node *n =
-      (struct cosmic_map_node *)malloc(sizeof(struct cosmic_map_node));
+  struct cosmic_map_node *n = malloc(sizeof(struct cosmic_map_node));
   n->k = k;
   n->v = v;
   n->next = n->prev = NULL;
@@ -34,7 +33,7 @@ struct cosmic_map_node *cosmic_map_node_new(cosmic_any_t k, cosmic_any_t v) {
 void cosmic_map_node_free(struct cosmic_map_node *n) { free(n); }
 
 cosmic_map_t *cosmic_map_new(cosmic_cmp cmp) {
-  cosmic_map_t *m = (cosmic_map_t *)calloc(1, sizeof(cosmic_map_t));
+  cosmic_map_t *m = calloc(1, sizeof(cosmic_map_t));
   m->cmp = cmp;
   return m;
 }
@@ -73,7 +72,8 @@ struct cosmic_map_node *cosmic_map_get_node(const cosmic_map_t *m,
   return NULL;
 }
 
-int cosmic_map_get_value(const cosmic_map_t *m, cosmic_any_t k, cosmic_any_t *v) {
+int cosmic_map_get_value(const cosmic_map_t *m, cosmic_any_t k,
+                         cosmic_any_t *v) {
   struct cosmic_map_node *n = cosmic_map_get_node(m, k);
   if (!n) {
     return -1;
@@ -176,8 +176,7 @@ struct cosmic_iterator_vtable COSMIC_MAP_ITERATOR_VTBL = {
     cosmic_map_iterator_close};
 
 cosmic_iterator_t *cosmic_map_iterator(const cosmic_map_t *m) {
-  cosmic_iterator_t *it =
-      (cosmic_iterator_t *)malloc(sizeof(struct cosmic_iterator));
+  cosmic_iterator_t *it = malloc(sizeof(struct cosmic_iterator));
   it->vtbl = &COSMIC_MAP_ITERATOR_VTBL;
   it->node = m->head;
   return it;

@@ -23,8 +23,7 @@ struct cosmic_iterator {
 };
 
 struct cosmic_list_node *cosmic_list_node_new(size_t i, cosmic_any_t o) {
-  struct cosmic_list_node *n =
-      (struct cosmic_list_node *)malloc(sizeof(struct cosmic_list_node));
+  struct cosmic_list_node *n = malloc(sizeof(struct cosmic_list_node));
   n->i = i;
   n->o = o;
   n->next = NULL;
@@ -33,9 +32,7 @@ struct cosmic_list_node *cosmic_list_node_new(size_t i, cosmic_any_t o) {
 
 void cosmic_list_node_free(struct cosmic_list_node *n) { free(n); }
 
-cosmic_list_t *cosmic_list_new() {
-  return (cosmic_list_t *)calloc(1, sizeof(cosmic_list_t));
-}
+cosmic_list_t *cosmic_list_new() { return calloc(1, sizeof(cosmic_list_t)); }
 
 void cosmic_list_free(cosmic_list_t *l, cosmic_list_dealloc dealloc) {
   cosmic_any_t o;
@@ -137,7 +134,7 @@ int cosmic_list_remove(cosmic_list_t *l, size_t i, cosmic_any_t *o) {
   }
 
   // Head case is different than other
-  struct cosmic_list_node *n = NULL, *prev;
+  struct cosmic_list_node *n = NULL, *prev = NULL;
   if (i == 0) {
     n = l->head;
     l->head = l->head->next;
@@ -188,8 +185,7 @@ struct cosmic_iterator_vtable COSMIC_LIST_ITERATOR_VTBL = {
     cosmic_list_iterator_next, NULL, cosmic_list_iterator_close};
 
 cosmic_iterator_t *cosmic_list_iterator(const cosmic_list_t *l) {
-  cosmic_iterator_t *it =
-      (cosmic_iterator_t *)malloc(sizeof(struct cosmic_iterator));
+  cosmic_iterator_t *it = malloc(sizeof(struct cosmic_iterator));
   it->vtbl = &COSMIC_LIST_ITERATOR_VTBL;
   it->node = l->head;
   return it;

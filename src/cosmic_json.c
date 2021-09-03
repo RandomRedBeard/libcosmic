@@ -150,7 +150,7 @@ const cosmic_json_t *cosmic_json_get_list_value(const cosmic_json_t *root,
  */
 
 cosmic_json_t *cosmic_json_new(enum cosmic_json_type type, cosmic_any_t o) {
-  cosmic_json_t *j = (cosmic_json_t *)malloc(sizeof(cosmic_json_t));
+  cosmic_json_t *j = malloc(sizeof(cosmic_json_t));
   j->type = type;
   j->o = o;
   return j;

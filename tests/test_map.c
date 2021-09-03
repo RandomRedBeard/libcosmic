@@ -1,7 +1,9 @@
-#include <assert.h>
+#include "test_base.h"
 #include <cosmic/cosmic_map.h>
 #include <stdio.h>
 #include <string.h>
+
+int mycmp(cosmic_any_t o1, cosmic_any_t o2) { return strcmp(o1.cp, o2.cp); }
 
 cosmic_any_t cany_str(const char *c) { return COSMIC_ANY(strdup(c)); }
 
@@ -13,12 +15,13 @@ void cany_map_free(cosmic_pair_t p) {
 }
 
 void check_str(cosmic_any_t o, const char *c) {
-  printf("Checking %s - %s\n", o.cp, c);
+  printf("Checking %s - %s\n%p - %p\n", o.cp, c, o.vp, c);
+  assert(o.cp);
   assert(strcmp(o.cp, c) == 0);
 }
 
 void test_size() {
-  cosmic_map_t *m = cosmic_map_new((cosmic_cmp)strcmp);
+  cosmic_map_t *m = cosmic_map_new(mycmp);
 
   cosmic_map_add(m, cany_str("key"), cany_str("value"));
   cosmic_map_add(m, cany_str("key1"), cany_str("value1"));
@@ -31,7 +34,7 @@ void test_size() {
 }
 
 void test_get() {
-  cosmic_map_t *m = cosmic_map_new((cosmic_cmp)strcmp);
+  cosmic_map_t *m = cosmic_map_new(mycmp);
 
   cosmic_map_add(m, cany_str("key"), cany_str("value"));
   cosmic_map_add(m, cany_str("key1"), cany_str("value1"));
@@ -52,7 +55,7 @@ void test_get() {
 }
 
 void test_remove() {
-  cosmic_map_t *m = cosmic_map_new((cosmic_cmp)strcmp);
+  cosmic_map_t *m = cosmic_map_new(mycmp);
 
   cosmic_map_add(m, cany_str("key"), cany_str("value"));
   cosmic_map_add(m, cany_str("key1"), cany_str("value1"));
@@ -101,7 +104,7 @@ void test_remove() {
 }
 
 void test_iterator() {
-  cosmic_map_t *m = cosmic_map_new((cosmic_cmp)strcmp);
+  cosmic_map_t *m = cosmic_map_new(mycmp);
 
   cosmic_map_add(m, cany_str("key"), cany_str("value"));
   cosmic_map_add(m, cany_str("key1"), cany_str("value1"));
@@ -130,6 +133,8 @@ void test_iterator() {
 
   cosmic_map_free(m, cany_map_free);
 }
+
+#include <stdlib.h>
 
 int main() {
   test_size();
