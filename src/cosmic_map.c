@@ -73,7 +73,7 @@ struct cosmic_map_node *cosmic_map_get_node(const cosmic_map_t *m,
   return NULL;
 }
 
-int cosmic_map_get(const cosmic_map_t *m, cosmic_any_t k, cosmic_any_t *v) {
+int cosmic_map_get_value(const cosmic_map_t *m, cosmic_any_t k, cosmic_any_t *v) {
   struct cosmic_map_node *n = cosmic_map_get_node(m, k);
   if (!n) {
     return -1;

@@ -26,7 +26,7 @@ int cosmic_json_object_equals(const cosmic_json_t *j1,
   cosmic_pair_t p;
   cosmic_any_t o;
   while (cosmic_iterator_next_pair(it, &p) == 0) {
-    if (cosmic_map_get(m2, p.k, &o) == -1) {
+    if (cosmic_map_get_value(m2, p.k, &o) == -1) {
       cosmic_iterator_close(it);
       return 0;
     }
@@ -124,7 +124,7 @@ const cosmic_json_t *cosmic_json_get_object_value(const cosmic_json_t *root,
   }
 
   cosmic_json_t *v = NULL;
-  if (cosmic_map_get(root->o.vp, COSMIC_ANY_CONST(k), PCOSMIC_ANY(&v)) != 0) {
+  if (cosmic_map_get_value(root->o.vp, COSMIC_ANY_CONST(k), PCOSMIC_ANY(&v)) != 0) {
     return NULL;
   }
 
