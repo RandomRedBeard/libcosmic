@@ -16,6 +16,7 @@ typedef void (*cosmic_map_dealloc)(cosmic_pair_t);
 
 COSMIC_DLL cosmic_map_t *cosmic_map_new(cosmic_cmp);
 COSMIC_DLL void cosmic_map_free(cosmic_map_t *, cosmic_map_dealloc);
+COSMIC_DLL size_t cosmic_map_size(const cosmic_map_t *);
 COSMIC_DLL int cosmic_map_get(const cosmic_map_t *, const cosmic_any_t,
                               cosmic_any_t *);
 COSMIC_DLL int cosmic_map_add(cosmic_map_t *, cosmic_any_t, cosmic_any_t);

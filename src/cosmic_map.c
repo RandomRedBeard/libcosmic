@@ -54,6 +54,8 @@ void cosmic_map_free(cosmic_map_t *m, cosmic_map_dealloc dealloc) {
   free(m);
 }
 
+size_t cosmic_map_size(const cosmic_map_t *m) { return m->len; }
+
 struct cosmic_map_node *cosmic_map_get_node(const cosmic_map_t *m,
                                             cosmic_any_t k) {
   if (m->len == 0 || !m->head) {

@@ -11,12 +11,16 @@ int cosmic_json_raw_equals(const cosmic_json_t *j1, const cosmic_json_t *j2) {
 
 int cosmic_json_string_equals(const cosmic_json_t *j1,
                               const cosmic_json_t *j2) {
-  return strcmp(j1->o.cp, j2->o.cp);
+  return strcmp(j1->o.cp, j2->o.cp) == 0;
 }
 
 int cosmic_json_object_equals(const cosmic_json_t *j1,
                               const cosmic_json_t *j2) {
   cosmic_map_t *m1 = j1->o.vp, *m2 = j2->o.vp;
+
+  if (cosmic_map_size(m1) != cosmic_map_size(m2)) {
+    return 0;
+  }
 
   cosmic_iterator_t *it = cosmic_map_iterator(m1);
   cosmic_pair_t p;
@@ -32,6 +36,8 @@ int cosmic_json_object_equals(const cosmic_json_t *j1,
       return 0;
     }
   }
+
+  cosmic_iterator_close(it);
 
   return 1;
 }
@@ -55,6 +61,9 @@ int cosmic_json_list_equals(const cosmic_json_t *j1, const cosmic_json_t *j2) {
       return 0;
     }
   }
+
+  cosmic_iterator_close(it1);
+  cosmic_iterator_close(it2);
 
   return 1;
 }

@@ -137,18 +137,18 @@ int cosmic_list_remove(cosmic_list_t *l, size_t i, cosmic_any_t *o) {
   }
 
   // Head case is different than other
-  struct cosmic_list_node *n = NULL;
+  struct cosmic_list_node *n = NULL, *prev;
   if (i == 0) {
     n = l->head;
     l->head = l->head->next;
   } else {
-    struct cosmic_list_node *prev = cosmic_list_get_node(l, i - 1);
+    prev = cosmic_list_get_node(l, i - 1);
     n = prev->next;
     prev->next = prev->next->next;
+  }
 
-    if (n == l->tail) {
-      l->tail = prev;
-    }
+  if (n == l->tail) {
+    l->tail = prev;
   }
 
   // Decrement following nodes
