@@ -57,7 +57,7 @@ cosmic_io_t *cosmic_io_mem_new(const char *buf, size_t len) {
   if (buf) {
     io->buf = strdup(buf);
   } else {
-    io->buf = calloc(1, len);
+    io->buf = calloc(len, sizeof(char));
   }
   io->len = len;
   io->r = io->w = 0;
@@ -67,4 +67,12 @@ cosmic_io_t *cosmic_io_mem_new(const char *buf, size_t len) {
 void cosmic_io_mem_free(cosmic_io_t *io) {
   free(io->buf);
   free(io);
+}
+
+int cosmic_io_mem_rsetpos(cosmic_io_t* io, size_t r) {
+  return io->r = r;
+}
+
+int cosmic_io_mem_wsetpos(cosmic_io_t* io, size_t w) {
+  return io->w = w;
 }
