@@ -21,6 +21,7 @@ COSMIC_DLL int cosmic_list_get(const cosmic_list_t *, size_t, cosmic_any_t *);
 COSMIC_DLL int cosmic_list_add(cosmic_list_t *, cosmic_any_t);
 COSMIC_DLL int cosmic_list_insert(cosmic_list_t *, size_t, cosmic_any_t);
 COSMIC_DLL int cosmic_list_remove(cosmic_list_t *, size_t, cosmic_any_t *);
+COSMIC_DLL int cosmic_list_pop(cosmic_list_t *, cosmic_any_t *);
 COSMIC_DLL cosmic_iterator_t *cosmic_list_iterator(const cosmic_list_t *);
 
 #ifdef __cplusplus

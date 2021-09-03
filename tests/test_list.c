@@ -3,6 +3,17 @@
 #include <stdio.h>
 #include <string.h>
 
+void print_list(cosmic_list_t *l) {
+  cosmic_any_t o;
+  cosmic_iterator_t *it = cosmic_list_iterator(l);
+  while (cosmic_iterator_next(it, &o) == 0) {
+    puts("loop");
+    puts(o.cp);
+  }
+
+  cosmic_iterator_close(it);
+}
+
 int main() {
   cosmic_list_t *l = cosmic_list_new();
   cosmic_list_add(l, COSMIC_ANY(strdup("thomas is neat")));
@@ -32,17 +43,13 @@ int main() {
 
   printf("%lu\n", cosmic_list_size(l));
 
-  cosmic_iterator_t *it = cosmic_list_iterator(l);
-  while (cosmic_iterator_next(it, &o) == 0) {
-    puts("loop");
-    puts(o.cp);
-  }
-
-  cosmic_iterator_close(it);
+  print_list(l);
 
   cosmic_list_remove(l, 2, &o);
   printf("Removed %s\n", o.cp);
   free(o.cp);
+
+  print_list(l);
 
   cosmic_list_free(l, (cosmic_list_dealloc)free);
   return 0;

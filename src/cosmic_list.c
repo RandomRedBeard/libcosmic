@@ -8,7 +8,7 @@ struct cosmic_list_node {
 
 struct cosmic_list {
   size_t len;
-  struct cosmic_list_node *head;
+  struct cosmic_list_node *head, *tail;
 };
 
 struct cosmic_iterator_vtable {
@@ -81,12 +81,12 @@ int cosmic_list_add(cosmic_list_t *l, cosmic_any_t o) {
   struct cosmic_list_node *n = cosmic_list_node_new(l->len++, o);
 
   if (!l->head) {
-    l->head = n;
+    l->head = l->tail = n;
     return l->len;
   }
 
-  n->next = l->head;
-  l->head = n;
+  l->tail->next = n;
+  l->tail = n;
 
   return l->len;
 }
@@ -111,6 +111,10 @@ int cosmic_list_insert(cosmic_list_t *l, size_t i, cosmic_any_t o) {
   } else {
     n->next = prev->next;
     prev->next = n;
+  }
+
+  if (prev == l->tail) {
+    l->tail = n;
   }
 
   n = n->next;
@@ -140,6 +144,10 @@ int cosmic_list_remove(cosmic_list_t *l, size_t i, cosmic_any_t *o) {
     struct cosmic_list_node *prev = cosmic_list_get_node(l, i - 1);
     n = prev->next;
     prev->next = prev->next->next;
+
+    if (n == l->tail) {
+      l->tail = prev;
+    }
   }
 
   // Decrement following nodes
