@@ -1,7 +1,6 @@
 #ifndef COSMIC_JSON_H
 #define COSMIC_JSON_H
 
-#include <stdlib.h>
 #include <string.h>
 
 #include <cosmic/cosmic_any.h>
