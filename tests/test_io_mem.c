@@ -3,9 +3,9 @@
 #include <stdio.h>
 
 void test_read() {
+  char buf[128];
   cosmic_io_t *io = cosmic_io_mem_new("thomas jansen", 13);
 
-  char buf[128];
   memset(buf, 0, 128);
 
   assert(cosmic_io_read(io, buf, 3) == 3);

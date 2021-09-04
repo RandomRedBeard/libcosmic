@@ -36,6 +36,7 @@ cosmic_list_t *cosmic_list_new() { return calloc(1, sizeof(cosmic_list_t)); }
 
 void cosmic_list_free(cosmic_list_t *l, cosmic_list_dealloc dealloc) {
   cosmic_any_t o;
+  
   while (cosmic_list_pop(l, &o) >= 0) {
     if (dealloc) {
       dealloc(o);

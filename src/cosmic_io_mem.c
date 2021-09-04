@@ -60,11 +60,13 @@ struct cosmic_io_vtable COSMIC_IO_MEM_VTBL = {cosmic_io_mem_read,
 cosmic_io_t *cosmic_io_mem_new(const char *buf, size_t len) {
   cosmic_io_t *io = malloc(sizeof(cosmic_io_t));
   io->vtbl = &COSMIC_IO_MEM_VTBL;
+
   if (buf) {
     io->buf = strdup(buf);
   } else {
     io->buf = calloc(len, sizeof(char));
   }
+  
   io->len = len;
   io->r = io->w = 0;
   return io;

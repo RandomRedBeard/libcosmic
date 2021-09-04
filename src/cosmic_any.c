@@ -31,3 +31,10 @@ cosmic_any_t COSMIC_ANY_UL(unsigned long ul) {
   o.ul = ul;
   return o;
 }
+
+cosmic_pair_t COSMIC_PAIR(cosmic_any_t o1, cosmic_any_t o2) {
+  cosmic_pair_t p;
+  p.k = o1;
+  p.v = o2;
+  return p;
+}

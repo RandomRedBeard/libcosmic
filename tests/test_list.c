@@ -104,9 +104,9 @@ void test_pop() {
 }
 
 void test_iterator() {
+  cosmic_any_t o;
   cosmic_list_t *l = cosmic_list_new();
   cosmic_iterator_t *it = NULL;
-  cosmic_any_t o;
 
   cosmic_list_add(l, cany_str("time1"));
   cosmic_list_add(l, cany_str("time2"));

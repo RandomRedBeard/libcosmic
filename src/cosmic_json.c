@@ -16,10 +16,10 @@ int cosmic_json_string_equals(const cosmic_json_t *j1,
 
 int cosmic_json_object_equals(const cosmic_json_t *j1,
                               const cosmic_json_t *j2) {
-  cosmic_map_t *m1 = j1->o.vp, *m2 = j2->o.vp;
-  cosmic_iterator_t *it = NULL;
   cosmic_pair_t p;
   cosmic_any_t o;
+  cosmic_map_t *m1 = j1->o.vp, *m2 = j2->o.vp;
+  cosmic_iterator_t *it = NULL;
 
   if (cosmic_map_size(m1) != cosmic_map_size(m2)) {
     return 0;
@@ -44,9 +44,9 @@ int cosmic_json_object_equals(const cosmic_json_t *j1,
 }
 
 int cosmic_json_list_equals(const cosmic_json_t *j1, const cosmic_json_t *j2) {
-  cosmic_list_t *l1 = j1->o.vp, *l2 = j2->o.vp;
-  cosmic_iterator_t *it1, *it2;
   cosmic_any_t o1, o2;
+  cosmic_list_t *l1 = j1->o.vp, *l2 = j2->o.vp;
+  cosmic_iterator_t *it1 = NULL, *it2 = NULL;
 
   if (cosmic_list_size(l1) != cosmic_list_size(l2)) {
     return 0;
@@ -123,6 +123,7 @@ const char *cosmic_json_get_string(const cosmic_json_t *j) {
 const cosmic_json_t *cosmic_json_get_object_value(const cosmic_json_t *root,
                                                   const char *k) {
   cosmic_json_t *v = NULL;
+
   if (root->type != COSMIC_OBJECT) {
     return NULL;
   }
@@ -138,6 +139,7 @@ const cosmic_json_t *cosmic_json_get_object_value(const cosmic_json_t *root,
 const cosmic_json_t *cosmic_json_get_list_value(const cosmic_json_t *root,
                                                 size_t i) {
   cosmic_json_t *v = NULL;
+
   if (root->type != COSMIC_LIST) {
     return NULL;
   }
@@ -187,6 +189,7 @@ int cosmic_json_set_bool(cosmic_json_t *j, long l) {
 
 cosmic_json_t *cosmic_json_new(enum cosmic_json_type type, cosmic_any_t o) {
   cosmic_json_t *j = malloc(sizeof(cosmic_json_t));
+
   j->type = type;
   j->o = o;
   return j;
@@ -232,10 +235,10 @@ cosmic_json_t *cosmic_json_copy_bool(const cosmic_json_t *j) {
 }
 
 cosmic_json_t *cosmic_json_copy_object(const cosmic_json_t *j) {
-  cosmic_json_t *r = cosmic_json_new_object();
-
-  cosmic_iterator_t *it = cosmic_map_iterator(j->o.vp);
   cosmic_pair_t p;
+  cosmic_json_t *r = cosmic_json_new_object();
+  cosmic_iterator_t *it = cosmic_map_iterator(j->o.vp);
+
   while (cosmic_iterator_next_pair(it, &p) == 0) {
     cosmic_json_add_kv(r, p.k.cp, cosmic_json_copy(p.v.vp));
   }
@@ -245,10 +248,10 @@ cosmic_json_t *cosmic_json_copy_object(const cosmic_json_t *j) {
 }
 
 cosmic_json_t *cosmic_json_copy_list(const cosmic_json_t *j) {
-  cosmic_json_t *r = cosmic_json_new_list();
-
-  cosmic_iterator_t *it = cosmic_list_iterator(j->o.vp);
   cosmic_any_t o;
+  cosmic_json_t *r = cosmic_json_new_list();
+  cosmic_iterator_t *it = cosmic_list_iterator(j->o.vp);
+
   while (cosmic_iterator_next(it, &o) == 0) {
     cosmic_json_add(r, cosmic_json_copy(o.vp));
   }
@@ -327,6 +330,7 @@ int cosmic_json_remove_key(cosmic_json_t *j, const char *k,
                            cosmic_json_t **dest) {
   cosmic_pair_t p;
   int i;
+
   if (j->type != COSMIC_OBJECT) {
     return -1;
   }
@@ -358,7 +362,8 @@ ssize_t cosmic_json_replace_key(cosmic_json_t *j, const char *k,
 
 int cosmic_json_remove(cosmic_json_t *j, size_t i, cosmic_json_t **dest) {
   cosmic_any_t o;
-  int r = -1;
+  int r;
+
   if (j->type != COSMIC_LIST) {
     return -1;
   }

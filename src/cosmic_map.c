@@ -39,12 +39,11 @@ cosmic_map_t *cosmic_map_new(cosmic_cmp cmp) {
 }
 
 void cosmic_map_free(cosmic_map_t *m, cosmic_map_dealloc dealloc) {
-  struct cosmic_map_node *prev, *n = m->head;
   cosmic_pair_t p;
+  struct cosmic_map_node *prev, *n = m->head;
   while (n) {
     if (dealloc) {
-      p.k = n->k;
-      p.v = n->v;
+      p = COSMIC_PAIR(n->k, n->v);
       dealloc(p);
     }
     prev = n;
@@ -144,8 +143,7 @@ int cosmic_map_remove(cosmic_map_t *m, cosmic_any_t k, cosmic_pair_t *p) {
     return -1;
   }
 
-  p->k = n->k;
-  p->v = n->v;
+  *p = COSMIC_PAIR(n->k, n->v);
 
   cosmic_map_node_free(n);
 

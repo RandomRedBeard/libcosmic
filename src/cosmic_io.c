@@ -30,6 +30,5 @@ int cosmic_io_close(cosmic_io_t *io) {
   if (!close) {
     return -1;
   }
-
   return close(io);
 }

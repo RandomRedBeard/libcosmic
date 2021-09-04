@@ -34,6 +34,8 @@ COSMIC_DLL cosmic_any_t COSMIC_ANY_L(long);
 COSMIC_DLL cosmic_any_t COSMIC_ANY_D(double);
 COSMIC_DLL cosmic_any_t COSMIC_ANY_UL(unsigned long);
 
+COSMIC_DLL cosmic_pair_t COSMIC_PAIR(cosmic_any_t, cosmic_any_t);
+
 #ifdef __cplusplus
 }
 #endif
