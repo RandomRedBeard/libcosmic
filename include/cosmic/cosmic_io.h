@@ -1,8 +1,8 @@
 #ifndef COSMIC_IO_H
 #define COSMIC_IO_H
 
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #include <cosmic/cosmic_lib.h>
 

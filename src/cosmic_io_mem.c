@@ -83,7 +83,7 @@ ssize_t cosmic_io_mem_rsetpos(cosmic_io_t *io, size_t r) {
 }
 
 ssize_t cosmic_io_mem_wsetpos(cosmic_io_t *io, size_t w) {
-  if ( w > io->len){
+  if (w > io->len) {
     return -1;
   }
   return (io->w = w);

@@ -27,7 +27,7 @@ enum cosmic_json_type {
 
 COSMIC_DLL int cosmic_json_equals(const cosmic_json_t *, const cosmic_json_t *);
 COSMIC_DLL enum cosmic_json_type cosmic_json_get_type(const cosmic_json_t *);
-/** 
+/**
  * Only applies to list
  */
 COSMIC_DLL ssize_t cosmic_json_size(const cosmic_json_t *);
@@ -79,12 +79,12 @@ COSMIC_DLL int cosmic_json_set_bool(cosmic_json_t *, long);
  *  Add key-value pair to object
  */
 COSMIC_DLL ssize_t cosmic_json_add_kv(cosmic_json_t *, const char *,
-                                  cosmic_json_t *);
+                                      cosmic_json_t *);
 /**
  *  Add object to list
  */
 COSMIC_DLL ssize_t cosmic_json_add(cosmic_json_t *, cosmic_json_t *);
-/** 
+/**
  * Insert object to list
  */
 COSMIC_DLL ssize_t cosmic_json_insert(cosmic_json_t *, size_t, cosmic_json_t *);
@@ -102,7 +102,7 @@ COSMIC_DLL int cosmic_json_remove_key(cosmic_json_t *, const char *,
  * If dest is not null, the old value is returned
  */
 COSMIC_DLL ssize_t cosmic_json_replace_key(cosmic_json_t *, const char *,
-                                       cosmic_json_t *, cosmic_json_t **);
+                                           cosmic_json_t *, cosmic_json_t **);
 
 /**
  * Remove value from json list

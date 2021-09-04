@@ -107,7 +107,7 @@ void test_iterator() {
   cosmic_map_t *m = cosmic_map_new(mycmp);
   cosmic_pair_t p;
   cosmic_any_t o;
-  cosmic_iterator_t* it = NULL;
+  cosmic_iterator_t *it = NULL;
 
   cosmic_map_add(m, cany_str("key"), cany_str("value"));
   cosmic_map_add(m, cany_str("key1"), cany_str("value1"));
