@@ -1,11 +1,13 @@
 #ifndef COSMIC_ANY_H
 #define COSMIC_ANY_H
 
+#include <cosmic/cosmic_lib.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#include <cosmic/cosmic_lib.h>
+#define COSMIC_VOID COSMIC_ANY(NULL);
 
 typedef union cosmic_any {
   double d;
