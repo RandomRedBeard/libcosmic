@@ -301,7 +301,7 @@ void cosmic_json_free(cosmic_json_t *j) {
 ssize_t cosmic_json_add_kv(cosmic_json_t *root, const char *k,
                            cosmic_json_t *v) {
   /**
-   *  Type checking
+   * Type checking
    */
   if (root->type != COSMIC_OBJECT) {
     return -1;

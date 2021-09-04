@@ -23,7 +23,7 @@ typedef struct cosmic_pair {
 } cosmic_pair_t;
 
 /**
- *  Wrapper for cmp func
+ * Wrapper for cmp func
  */
 typedef int (*cosmic_cmp)(const cosmic_any_t, const cosmic_any_t);
 

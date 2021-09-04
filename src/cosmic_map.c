@@ -87,7 +87,7 @@ int cosmic_map_get_value(const cosmic_map_t *m, cosmic_any_t k,
 ssize_t cosmic_map_add(cosmic_map_t *m, cosmic_any_t k, cosmic_any_t v) {
   struct cosmic_map_node *n = NULL;
   /**
-   *  Fail on key exists
+   * Fail on key exists
    */
   if (cosmic_map_get_node(m, k)) {
     return -1;

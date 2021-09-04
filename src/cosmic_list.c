@@ -92,7 +92,7 @@ ssize_t cosmic_list_insert(cosmic_list_t *l, size_t i, cosmic_any_t o) {
   }
 
   /**
-   *  Insert at o on empty list
+   * Insert at o on empty list
    */
   if (i == 0 && !l->head) {
     return cosmic_list_add(l, o);

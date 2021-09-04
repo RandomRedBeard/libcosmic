@@ -14,7 +14,7 @@ struct cosmic_io {
 
 ssize_t cosmic_io_mem_read(cosmic_io_t *io, char *buf, size_t len) {
   /**
-   *  Number of bytes I can read from io->buf
+   * Number of bytes I can read from io->buf
    * len - i for nbytes
    */
   size_t nbytes = io->len - io->r;

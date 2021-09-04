@@ -23,7 +23,7 @@ COSMIC_DLL ssize_t cosmic_map_add(cosmic_map_t *, cosmic_any_t, cosmic_any_t);
 COSMIC_DLL int cosmic_map_remove(cosmic_map_t *, const cosmic_any_t,
                                  cosmic_pair_t *);
 /**
- *  Type is cosmic_pair_t
+ * Type is cosmic_pair_t
  */
 COSMIC_DLL cosmic_iterator_t *cosmic_map_iterator(const cosmic_map_t *);
 

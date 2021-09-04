@@ -32,7 +32,7 @@ COSMIC_DLL enum cosmic_json_type cosmic_json_get_type(const cosmic_json_t *);
 COSMIC_DLL ssize_t cosmic_json_size(const cosmic_json_t *);
 
 /**
- *  New funcs
+ * New funcs
  */
 
 COSMIC_DLL cosmic_json_t *cosmic_json_new_null();
@@ -45,12 +45,12 @@ COSMIC_DLL cosmic_json_t *cosmic_json_new_list();
 COSMIC_DLL cosmic_json_t *cosmic_json_copy(const cosmic_json_t *);
 
 /**
- *  Free Func
+ * Free Func
  */
 COSMIC_DLL void cosmic_json_free(cosmic_json_t *);
 
 /**
- *  Get raw type
+ * Get raw type
  */
 
 COSMIC_DLL double cosmic_json_get_number(const cosmic_json_t *);
@@ -58,7 +58,7 @@ COSMIC_DLL const char *cosmic_json_get_string(const cosmic_json_t *);
 COSMIC_DLL long cosmic_json_get_bool(const cosmic_json_t *);
 
 /**
- *  Get complex type
+ * Get complex type
  */
 
 COSMIC_DLL const cosmic_json_t *
@@ -67,7 +67,7 @@ COSMIC_DLL const cosmic_json_t *
 cosmic_json_get_list_value(const cosmic_json_t *, size_t);
 
 /**
- *  Set raw type
+ * Set raw type
  */
 
 COSMIC_DLL int cosmic_json_set_number(cosmic_json_t *, double);
@@ -75,16 +75,19 @@ COSMIC_DLL int cosmic_json_set_string(cosmic_json_t *, const char *);
 COSMIC_DLL int cosmic_json_set_bool(cosmic_json_t *, long);
 
 /**
- *  Add key-value pair to object
+ * Add key-value pair to object
+ * Assumes ownership of json_t*
  */
 COSMIC_DLL ssize_t cosmic_json_add_kv(cosmic_json_t *, const char *,
                                       cosmic_json_t *);
 /**
- *  Add object to list
+ * Add object to list
+ * Assumes ownership
  */
 COSMIC_DLL ssize_t cosmic_json_add(cosmic_json_t *, cosmic_json_t *);
 /**
  * Insert object to list
+ * Assumes ownership
  */
 COSMIC_DLL ssize_t cosmic_json_insert(cosmic_json_t *, size_t, cosmic_json_t *);
 
