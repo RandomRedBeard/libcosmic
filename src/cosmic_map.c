@@ -43,7 +43,8 @@ void cosmic_map_free(cosmic_map_t *m, cosmic_map_dealloc dealloc) {
   cosmic_pair_t p;
   while (n) {
     if (dealloc) {
-      p = (cosmic_pair_t){n->k, n->v};
+      p.k = n->k;
+      p.v = n->v;
       dealloc(p);
     }
     prev = n;
@@ -57,11 +58,12 @@ size_t cosmic_map_size(const cosmic_map_t *m) { return m->len; }
 
 struct cosmic_map_node *cosmic_map_get_node(const cosmic_map_t *m,
                                             cosmic_any_t k) {
+  struct cosmic_map_node *n = NULL;
   if (m->len == 0 || !m->head) {
     return NULL;
   }
 
-  struct cosmic_map_node *n = m->head;
+  n = m->head;
   while (n) {
     if (m->cmp(n->k, k) == 0) {
       return n;
@@ -83,15 +85,18 @@ int cosmic_map_get_value(const cosmic_map_t *m, cosmic_any_t k,
   return 0;
 }
 
-int cosmic_map_add(cosmic_map_t *m, cosmic_any_t k, cosmic_any_t v) {
-  // Fail on key exists
+ssize_t cosmic_map_add(cosmic_map_t *m, cosmic_any_t k, cosmic_any_t v) {
+  struct cosmic_map_node *n = NULL;
+  /**
+   *  Fail on key exists
+   */
   if (cosmic_map_get_node(m, k)) {
     return -1;
   }
 
   m->len++;
 
-  struct cosmic_map_node *n = cosmic_map_node_new(k, v);
+  n = cosmic_map_node_new(k, v);
 
   if (!m->head) {
     m->head = m->tail = n;

@@ -48,15 +48,11 @@ size_t cosmic_list_size(const cosmic_list_t *l) { return l->len; }
 
 struct cosmic_list_node *cosmic_list_get_node(const cosmic_list_t *l,
                                               size_t i) {
-  if (l->len == 0 || !l->head) {
-    return NULL;
-  }
-
-  if (i < 0 || i >= l->len) {
-    return NULL;
-  }
-
   struct cosmic_list_node *n = l->head;
+  if (i > l->len) {
+    return NULL;
+  }
+
   while (n && n->i != i) {
     n = n->next;
   }
@@ -74,7 +70,7 @@ int cosmic_list_get(const cosmic_list_t *l, size_t i, cosmic_any_t *o) {
   return 0;
 }
 
-int cosmic_list_add(cosmic_list_t *l, cosmic_any_t o) {
+ssize_t cosmic_list_add(cosmic_list_t *l, cosmic_any_t o) {
   struct cosmic_list_node *n = cosmic_list_node_new(l->len++, o);
 
   if (!l->head) {
@@ -88,19 +84,21 @@ int cosmic_list_add(cosmic_list_t *l, cosmic_any_t o) {
   return l->len;
 }
 
-int cosmic_list_insert(cosmic_list_t *l, size_t i, cosmic_any_t o) {
+ssize_t cosmic_list_insert(cosmic_list_t *l, size_t i, cosmic_any_t o) {
+  struct cosmic_list_node *n = NULL, *prev = NULL;
   if (i > l->len) {
     return -1;
   }
 
-  // Insert at o on empty list
+  /**
+   *  Insert at o on empty list
+   */
   if (i == 0 && !l->head) {
     return cosmic_list_add(l, o);
   }
 
-  struct cosmic_list_node *n = cosmic_list_node_new(i, o);
-  struct cosmic_list_node *prev =
-      i == 0 ? NULL : cosmic_list_get_node(l, i - 1);
+  n = cosmic_list_node_new(i, o);
+  prev = i == 0 ? NULL : cosmic_list_get_node(l, i - 1);
 
   if (i == 0) {
     n->next = l->head;
@@ -110,7 +108,9 @@ int cosmic_list_insert(cosmic_list_t *l, size_t i, cosmic_any_t o) {
     prev->next = n;
   }
 
-  // Tail check
+  /**
+   * Tail check
+   */
   if (prev == l->tail) {
     l->tail = n;
   }
@@ -125,16 +125,14 @@ int cosmic_list_insert(cosmic_list_t *l, size_t i, cosmic_any_t o) {
 }
 
 int cosmic_list_remove(cosmic_list_t *l, size_t i, cosmic_any_t *o) {
-  if (l->len == 0 || !l->head) {
+  struct cosmic_list_node *n = NULL, *prev = NULL, *inc = NULL;
+  if (i >= l->len) {
     return -1;
   }
 
-  if (i < 0 || i >= l->len) {
-    return -1;
-  }
-
-  // Head case is different than other
-  struct cosmic_list_node *n = NULL, *prev = NULL;
+  /**
+   * Head case is different than other
+   */
   if (i == 0) {
     n = l->head;
     l->head = l->head->next;
@@ -148,14 +146,18 @@ int cosmic_list_remove(cosmic_list_t *l, size_t i, cosmic_any_t *o) {
     l->tail = prev;
   }
 
-  // Decrement following nodes
-  struct cosmic_list_node *inc = n;
+  /**
+   * Decrement following nodes
+   */
+  inc = n;
   while (inc) {
     inc->i--;
     inc = inc->next;
   }
 
-  // Decrement len
+  /**
+   * Decrement len
+   */
   l->len--;
 
   *o = n->o;

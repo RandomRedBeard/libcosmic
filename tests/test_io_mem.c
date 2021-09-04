@@ -18,11 +18,12 @@ void test_read() {
 }
 
 void test_write() {
+  char buf[128];
+  ssize_t i;
   cosmic_io_t *io = cosmic_io_mem_new(NULL, 128);
   assert(cosmic_io_write(io, "thomas", 6) == 6);
 
-  char buf[128];
-  int i = cosmic_io_read(io, buf, 6);
+  i = cosmic_io_read(io, buf, 6);
   assert(i == 6);
   *(buf + i) = 0;
   assert(strcmp(buf, "thomas") == 0);
@@ -32,7 +33,9 @@ void test_write() {
 
 void test_close() {
   cosmic_io_t *io = cosmic_io_mem_new(NULL, 128);
-  // Close on io_mem is meaningless;
+  /**
+   * Close on io_mem is meaningless
+   */
   assert(cosmic_io_close(io) == -1);
   cosmic_io_mem_free(io);
 }

@@ -13,4 +13,13 @@
 #define COSMIC_DLL
 #endif
 
+#if defined(_MSC_VER)
+#include <BaseTsd.h>
+typedef SSIZE_T ssize_t;
+#define strdup _strdup
+#else
+#include <sys/types.h>
+extern char *strdup(const char *);
+#endif
+
 #endif

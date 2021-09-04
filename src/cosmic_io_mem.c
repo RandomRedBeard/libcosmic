@@ -1,9 +1,9 @@
 #include "cosmic/cosmic_io_mem.h"
 
 struct cosmic_io_vtable {
-  int (*read)(cosmic_io_t *, char *, size_t);
-  int (*write)(cosmic_io_t *, const char *, size_t);
-  int (*close)(cosmic_io_t *);
+  ssize_t (*read)(cosmic_io_t *, char *, size_t);
+  ssize_t (*write)(cosmic_io_t *, const char *, size_t);
+  ssize_t (*close)(cosmic_io_t *);
 };
 
 struct cosmic_io {
@@ -12,12 +12,16 @@ struct cosmic_io {
   size_t len, r, w;
 };
 
-int cosmic_io_mem_read(cosmic_io_t *io, char *buf, size_t len) {
-  // Number of bytes I can read from io->buf
-  // len - i for nbytes
+ssize_t cosmic_io_mem_read(cosmic_io_t *io, char *buf, size_t len) {
+  /**
+   *  Number of bytes I can read from io->buf
+   * len - i for nbytes
+   */
   size_t nbytes = io->len - io->r;
 
-  // No bytes to read
+  /**
+   * No bytes to read
+   */
   if (nbytes == 0) {
     return -1;
   }
@@ -31,10 +35,12 @@ int cosmic_io_mem_read(cosmic_io_t *io, char *buf, size_t len) {
   return nbytes;
 }
 
-int cosmic_io_mem_write(cosmic_io_t *io, const char *buf, size_t len) {
+ssize_t cosmic_io_mem_write(cosmic_io_t *io, const char *buf, size_t len) {
   size_t nbytes = io->len - io->w;
 
-  // Cannot write (no space)
+  /**
+   * Cannot write (no space)
+   */
   if (nbytes == 0) {
     return -1;
   }
@@ -69,10 +75,16 @@ void cosmic_io_mem_free(cosmic_io_t *io) {
   free(io);
 }
 
-int cosmic_io_mem_rsetpos(cosmic_io_t* io, size_t r) {
-  return io->r = r;
+ssize_t cosmic_io_mem_rsetpos(cosmic_io_t *io, size_t r) {
+  if (r > io->len) {
+    return -1;
+  }
+  return (io->r = r);
 }
 
-int cosmic_io_mem_wsetpos(cosmic_io_t* io, size_t w) {
-  return io->w = w;
+ssize_t cosmic_io_mem_wsetpos(cosmic_io_t *io, size_t w) {
+  if ( w > io->len){
+    return -1;
+  }
+  return (io->w = w);
 }

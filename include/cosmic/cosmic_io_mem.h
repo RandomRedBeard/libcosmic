@@ -13,8 +13,8 @@ extern "C" {
 
 COSMIC_DLL cosmic_io_t *cosmic_io_mem_new(const char *, size_t);
 COSMIC_DLL void cosmic_io_mem_free(cosmic_io_t *);
-COSMIC_DLL int cosmic_io_mem_rsetpos(cosmic_io_t*, size_t);
-COSMIC_DLL int cosmic_io_mem_wsetpos(cosmic_io_t*, size_t);
+COSMIC_DLL ssize_t cosmic_io_mem_rsetpos(cosmic_io_t*, size_t);
+COSMIC_DLL ssize_t cosmic_io_mem_wsetpos(cosmic_io_t*, size_t);
 
 #ifdef __cplusplus
 }
