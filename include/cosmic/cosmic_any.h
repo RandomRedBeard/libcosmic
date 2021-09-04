@@ -7,7 +7,7 @@
 extern "C" {
 #endif
 
-#define COSMIC_VOID COSMIC_ANY(NULL);
+#define COSMIC_VOID COSMIC_ANY(NULL)
 
 typedef union cosmic_any {
   double d;

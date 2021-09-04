@@ -163,7 +163,7 @@ int cosmic_json_set_number(cosmic_json_t *j, double d) {
 }
 
 int cosmic_json_set_string(cosmic_json_t *j, const char *c) {
-  if (j->type != COSMIC_STRING) {
+  if (j->type != COSMIC_STRING || !c) {
     return -1;
   }
 
@@ -193,7 +193,7 @@ cosmic_json_t *cosmic_json_new(enum cosmic_json_type type, cosmic_any_t o) {
 }
 
 cosmic_json_t *cosmic_json_new_null() {
-  return cosmic_json_new(COSMIC_NULL, COSMIC_ANY(NULL));
+  return cosmic_json_new(COSMIC_NULL, COSMIC_VOID);
 }
 
 cosmic_json_t *cosmic_json_new_number(double d) {
