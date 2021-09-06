@@ -75,6 +75,7 @@ COSMIC_DLL int cosmic_socket_shutdown(cosmic_socket_t *, int);
  * Set underlying io features
  */
 
+COSMIC_DLL int cosmic_socket_set_nonblock(cosmic_socket_t *, int);
 COSMIC_DLL void cosmic_socket_set_rpwait(cosmic_socket_t *, int);
 COSMIC_DLL void cosmic_socket_set_wpwait(cosmic_socket_t *, int);
 

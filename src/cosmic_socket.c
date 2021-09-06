@@ -107,10 +107,15 @@ ssize_t cosmic_socket_io_write(cosmic_io_t *io, const char *buf, size_t len) {
 }
 
 int cosmic_socket_io_close(cosmic_io_t *io) {
+  int fd = io->fd;
+  if (fd < 0) {
+    return -1;
+  }
+  io->fd = -1;
 #ifdef _WIN32
-  return closesocket(io->fd);
+  return closesocket(fd);
 #else
-  return close(io->fd);
+  return close(fd);
 #endif
 }
 
@@ -189,6 +194,26 @@ int cosmic_socket_wpoll(cosmic_socket_t *s) {
 
 int cosmic_socket_shutdown(cosmic_socket_t *s, int how) {
   return cosmic_socket_io_shutdown(&s->io, how);
+}
+
+int cosmic_socket_set_nonblock(cosmic_socket_t *s, int nonblock) {
+#ifdef _WIN32
+  u_long i = nonblock;
+  return ioctlsocket(io->fd, , &i);
+#else
+  int flags = fcntl(s->io.fd, F_GETFL, 0);
+  if (flags < 0) {
+    return flags;
+  }
+
+  if (nonblock) {
+    flags |= O_NONBLOCK;
+  } else {
+    flags &= ~O_NONBLOCK;
+  }
+
+  return fcntl(s->io.fd, F_SETFL, flags);
+#endif
 }
 
 void cosmic_socket_set_rpwait(cosmic_socket_t *s, int rpwait) {

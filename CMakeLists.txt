@@ -8,7 +8,7 @@ set(MEMORYCHECK_COMMAND_OPTIONS "--leak-check=full --show-leak-kinds=all")
 if (MSVC)
     add_compile_options(/W4 /WX)
 else()
-    add_compile_options(-Wall -Wextra -pedantic -Werror -std=c90)
+    add_compile_options(-Wall -Wextra -pedantic -Werror -std=c90 -ansi)
 endif()
 
 include_directories("${PROJECT_SOURCE_DIR}/include")
