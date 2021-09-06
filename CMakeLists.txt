@@ -15,6 +15,7 @@ include_directories("${PROJECT_SOURCE_DIR}/include")
 
 # Add DLL flag for windows shared lib
 add_definitions(-DCOSMIC_DLL_EXPORT)
+add_definitions(-D_POSIX_C_SOURCE)
 
 file(GLOB COSMIC_SOURCE src/*.c)
 
