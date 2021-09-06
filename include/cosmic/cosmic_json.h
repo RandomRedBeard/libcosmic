@@ -1,10 +1,13 @@
 #ifndef COSMIC_JSON_H
 #define COSMIC_JSON_H
 
+#include <ctype.h>
+#include <stdio.h>
 #include <string.h>
 
 #include <cosmic/cosmic_any.h>
 #include <cosmic/cosmic_io.h>
+#include <cosmic/cosmic_io_mem.h>
 #include <cosmic/cosmic_lib.h>
 #include <cosmic/cosmic_list.h>
 #include <cosmic/cosmic_map.h>
@@ -12,6 +15,10 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+#define COSMIC_NUMBER_BUFFER_LEN 32
+#define COSMIC_STRING_MAX_LEN 1024
+#define COSMIC_JSON_WHITESPACE " \n\t\r"
 
 typedef struct cosmic_json cosmic_json_t;
 
@@ -123,11 +130,21 @@ COSMIC_DLL cosmic_iterator_t *cosmic_json_iterator(const cosmic_json_t *);
  * Parsing and Writing functions
  */
 
-COSMIC_DLL cosmic_json_t *cosmic_json_parse(const char *);
-COSMIC_DLL cosmic_json_t *cosmic_json_parse_stream(cosmic_io_t *);
+COSMIC_DLL ssize_t cosmic_json_write_stream(const cosmic_json_t *,
+                                            cosmic_io_t *, const char *);
 
-COSMIC_DLL int cosmic_json_write(cosmic_json_t *, char *, size_t);
-COSMIC_DLL int cosmic_json_write_stream(cosmic_json_t *, cosmic_io_t *);
+/**
+ * write_stream(io_mem_new(buf, len));
+ */
+COSMIC_DLL ssize_t cosmic_json_write_buffer(const cosmic_json_t *, char *,
+                                            size_t, const char *);
+
+COSMIC_DLL cosmic_json_t *cosmic_json_read_stream(cosmic_io_t *io);
+
+/**
+ * read_stream(io_mem_new(buf, len))
+ */
+COSMIC_DLL cosmic_json_t *cosmic_json_read_buffer(char *buf, size_t);
 
 #ifdef __cplusplus
 }

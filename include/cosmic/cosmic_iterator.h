@@ -12,6 +12,7 @@ typedef struct cosmic_iterator cosmic_iterator_t;
 
 COSMIC_DLL int cosmic_iterator_next(cosmic_iterator_t *, cosmic_any_t *);
 COSMIC_DLL int cosmic_iterator_next_pair(cosmic_iterator_t *, cosmic_pair_t *);
+COSMIC_DLL int cosmic_iterator_has_next(const cosmic_iterator_t *);
 COSMIC_DLL void cosmic_iterator_close(cosmic_iterator_t *);
 
 #ifdef __cplusplus

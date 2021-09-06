@@ -107,7 +107,7 @@ void test_object_equals() {
 void test_list_equals() {
   cosmic_json_t *j1 = cosmic_json_new_list();
   cosmic_json_t *j2 = cosmic_json_new_list();
-  cosmic_json_t* o1 = cosmic_json_new_object();
+  cosmic_json_t *o1 = cosmic_json_new_object();
 
   assert(cosmic_json_equals(j1, j2));
 
@@ -130,6 +130,8 @@ void test_list_equals() {
   cosmic_json_add_kv(o1, "another_key", cosmic_json_new_string("value1"));
   cosmic_json_add_kv(o1, "number", cosmic_json_new_number(321));
 
+  assert(cosmic_json_size(o1) == 3);
+
   cosmic_json_add(j1, o1);
   assert(!cosmic_json_equals(j1, j2));
 
@@ -140,8 +142,42 @@ void test_list_equals() {
   cosmic_json_remove_key(o1, "key", NULL);
   assert(!cosmic_json_equals(j1, j2));
 
+  assert(cosmic_json_size(j1) == 2);
+
   cosmic_json_free(j1);
   cosmic_json_free(j2);
+}
+
+void test_raw_types() {
+  cosmic_json_t *j = cosmic_json_new_string("string");
+  assert(strcmp(cosmic_json_get_string(j), "string") == 0);
+  cosmic_json_free(j);
+
+  j = cosmic_json_new_number(123);
+  assert(cosmic_json_get_number(j) == 123);
+  cosmic_json_free(j);
+
+  j = cosmic_json_new_bool(1);
+  assert(cosmic_json_get_bool(j));
+  cosmic_json_set_bool(j, 0);
+  assert(!cosmic_json_get_bool(j));
+
+  cosmic_json_free(j);
+}
+
+void test_list_insert() {
+  const cosmic_json_t* s = NULL;
+  cosmic_json_t* l = cosmic_json_new_list();
+
+  cosmic_json_add(l, cosmic_json_new_string("ok"));
+  cosmic_json_add(l, cosmic_json_new_string("ok"));
+  cosmic_json_insert(l, 0, cosmic_json_new_string("first"));
+  cosmic_json_insert(l, cosmic_json_size(l), cosmic_json_new_string("last"));
+
+  s = cosmic_json_get_list_value(l, 0);
+  assert(strcmp(cosmic_json_get_string(s), "first") == 0);
+
+  cosmic_json_free(l);
 }
 
 int main() {
@@ -150,5 +186,7 @@ int main() {
   test_bool_equals();
   test_object_equals();
   test_list_equals();
+  test_raw_types();
+  test_list_insert();
   return 0;
 }

@@ -11,7 +11,11 @@
 extern "C" {
 #endif
 
-COSMIC_DLL cosmic_io_t *cosmic_io_mem_new(const char *, size_t);
+/**
+ * Does not take ownership of char*
+ * Will not attempt to free on io_mem_free
+ */
+COSMIC_DLL cosmic_io_t *cosmic_io_mem_new(char *, size_t);
 COSMIC_DLL void cosmic_io_mem_free(cosmic_io_t *);
 COSMIC_DLL ssize_t cosmic_io_mem_rsetpos(cosmic_io_t *, size_t);
 COSMIC_DLL ssize_t cosmic_io_mem_wsetpos(cosmic_io_t *, size_t);

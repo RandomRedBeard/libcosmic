@@ -14,6 +14,7 @@ struct cosmic_map {
 struct cosmic_iterator_vtable {
   int (*next)(cosmic_iterator_t *, cosmic_any_t *);
   int (*next_pair)(cosmic_iterator_t *, cosmic_pair_t *);
+  int (*has_next)(const cosmic_iterator_t *);
   void (*close)(cosmic_iterator_t *);
 };
 
@@ -172,11 +173,15 @@ int cosmic_map_iterator_next_pair(cosmic_iterator_t *it, cosmic_pair_t *p) {
   return 0;
 }
 
+int cosmic_map_iterator_has_next(const cosmic_iterator_t *it) {
+  return it->node != NULL;
+}
+
 void cosmic_map_iterator_close(cosmic_iterator_t *it) { free(it); }
 
 struct cosmic_iterator_vtable COSMIC_MAP_ITERATOR_VTBL = {
     cosmic_map_iterator_next, cosmic_map_iterator_next_pair,
-    cosmic_map_iterator_close};
+    cosmic_map_iterator_has_next, cosmic_map_iterator_close};
 
 cosmic_iterator_t *cosmic_map_iterator(const cosmic_map_t *m) {
   cosmic_iterator_t *it = malloc(sizeof(struct cosmic_iterator));

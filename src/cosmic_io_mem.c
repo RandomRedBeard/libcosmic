@@ -57,25 +57,16 @@ ssize_t cosmic_io_mem_write(cosmic_io_t *io, const char *buf, size_t len) {
 struct cosmic_io_vtable COSMIC_IO_MEM_VTBL = {cosmic_io_mem_read,
                                               cosmic_io_mem_write, NULL};
 
-cosmic_io_t *cosmic_io_mem_new(const char *buf, size_t len) {
+cosmic_io_t *cosmic_io_mem_new(char *buf, size_t len) {
   cosmic_io_t *io = malloc(sizeof(cosmic_io_t));
   io->vtbl = &COSMIC_IO_MEM_VTBL;
-
-  if (buf) {
-    io->buf = strdup(buf);
-  } else {
-    io->buf = calloc(len, sizeof(char));
-  }
-  
+  io->buf = buf;
   io->len = len;
   io->r = io->w = 0;
   return io;
 }
 
-void cosmic_io_mem_free(cosmic_io_t *io) {
-  free(io->buf);
-  free(io);
-}
+void cosmic_io_mem_free(cosmic_io_t *io) { free(io); }
 
 ssize_t cosmic_io_mem_rsetpos(cosmic_io_t *io, size_t r) {
   if (r > io->len) {

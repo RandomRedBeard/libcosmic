@@ -19,13 +19,11 @@ void test_read() {
 
 void test_write() {
   char buf[128];
-  ssize_t i;
-  cosmic_io_t *io = cosmic_io_mem_new(NULL, 128);
-  assert(cosmic_io_write(io, "thomas", 6) == 6);
+  cosmic_io_t *io = cosmic_io_mem_new(buf, 128);
 
-  i = cosmic_io_read(io, buf, 6);
-  assert(i == 6);
-  *(buf + i) = 0;
+  memset(buf, 0, 128);
+
+  assert(cosmic_io_write(io, "thomas", 6) == 6);
   assert(strcmp(buf, "thomas") == 0);
 
   cosmic_io_mem_free(io);

@@ -3,6 +3,7 @@
 struct cosmic_iterator_vtable {
   int (*next)(cosmic_iterator_t *, cosmic_any_t *);
   int (*next_pair)(cosmic_iterator_t *, cosmic_pair_t *);
+  int (*has_next)(const cosmic_iterator_t *);
   void (*close)(cosmic_iterator_t *);
 };
 
@@ -22,6 +23,13 @@ int cosmic_iterator_next_pair(cosmic_iterator_t *it, cosmic_pair_t *p) {
     return -1;
   }
   return it->vtbl->next_pair(it, p);
+}
+
+int cosmic_iterator_has_next(const cosmic_iterator_t *it) {
+  if (!it->vtbl->has_next) {
+    return 0;
+  }
+  return it->vtbl->has_next(it);
 }
 
 void cosmic_iterator_close(cosmic_iterator_t *it) {

@@ -116,6 +116,10 @@ const char *cosmic_json_get_string(const cosmic_json_t *j) {
   return j->type == COSMIC_STRING ? j->o.cp : NULL;
 }
 
+long cosmic_json_get_bool(const cosmic_json_t *j) {
+  return j->type == COSMIC_BOOL ? j->o.l : 0;
+}
+
 /**
  * Get complex types
  */

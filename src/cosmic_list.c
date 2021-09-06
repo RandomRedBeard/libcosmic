@@ -14,6 +14,7 @@ struct cosmic_list {
 struct cosmic_iterator_vtable {
   int (*next)(cosmic_iterator_t *, cosmic_any_t *);
   int (*next_pair)(cosmic_iterator_t *, cosmic_pair_t *);
+  int (*has_next)(const cosmic_iterator_t *);
   void (*close)(cosmic_iterator_t *);
 };
 
@@ -36,7 +37,7 @@ cosmic_list_t *cosmic_list_new() { return calloc(1, sizeof(cosmic_list_t)); }
 
 void cosmic_list_free(cosmic_list_t *l, cosmic_list_dealloc dealloc) {
   cosmic_any_t o;
-  
+
   while (cosmic_list_pop(l, &o) >= 0) {
     if (dealloc) {
       dealloc(o);
@@ -182,10 +183,15 @@ int cosmic_list_iterator_next(cosmic_iterator_t *it, cosmic_any_t *o) {
   return 0;
 }
 
+int cosmic_list_iterator_has_next(const cosmic_iterator_t *it) {
+  return it->node != NULL;
+}
+
 void cosmic_list_iterator_close(cosmic_iterator_t *it) { free(it); }
 
 struct cosmic_iterator_vtable COSMIC_LIST_ITERATOR_VTBL = {
-    cosmic_list_iterator_next, NULL, cosmic_list_iterator_close};
+    cosmic_list_iterator_next, NULL, cosmic_list_iterator_has_next,
+    cosmic_list_iterator_close};
 
 cosmic_iterator_t *cosmic_list_iterator(const cosmic_list_t *l) {
   cosmic_iterator_t *it = malloc(sizeof(struct cosmic_iterator));
