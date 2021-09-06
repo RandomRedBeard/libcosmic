@@ -20,6 +20,9 @@ typedef SSIZE_T ssize_t;
 #else
 #include <sys/types.h>
 extern char *strdup(const char *);
+#ifndef snprintf /* OSX defines snprintf */
+extern int snprintf(char *, size_t, const char *, ...);
+#endif
 #endif
 
 #endif
