@@ -16,9 +16,8 @@ ssize_t cosmic_json_write_newline(cosmic_io_t *io, const char *indent) {
 }
 
 ssize_t cosmic_json_write_indent(cosmic_io_t *io, const char *indent,
-                                 int idepth) {
-  int i;
-  size_t ilen;
+                                 size_t idepth) {
+  size_t i, ilen;
   if (!indent) {
     return 0;
   }

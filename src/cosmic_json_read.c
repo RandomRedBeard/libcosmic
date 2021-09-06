@@ -40,7 +40,7 @@ ssize_t cosmic_json_read_string(cosmic_io_t *io, char *dest, size_t len) {
    * i is current dest index
    * j is counter (escape str len can vary)
    */
-  ssize_t n;
+  ssize_t n = 0;
   size_t i = 0, j = 0;
   while (i < len && (n = cosmic_io_read(io, &c, 1)) > 0) {
     j++;
@@ -88,7 +88,7 @@ ssize_t cosmic_json_read_string(cosmic_io_t *io, char *dest, size_t len) {
  */
 int cosmic_json_read_and_compare(cosmic_io_t *io, const char *cmp) {
   char c;
-  int n;
+  ssize_t n = 0;
   while (*cmp && (n = cosmic_io_read(io, &c, 1)) > 0) {
     if (c != *cmp) {
       return -1;
@@ -142,7 +142,7 @@ ssize_t cosmic_json_read_number(cosmic_io_t *io, cosmic_json_t **j, char h,
    */
 
   double d;
-  ssize_t n;
+  ssize_t n = 0;
   size_t i = 0;
   char dec = 0, buf[COSMIC_NUMBER_BUFFER_LEN + 1], *rcheck;
   do {
