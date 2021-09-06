@@ -38,6 +38,9 @@
 extern "C" {
 #endif
 
+/* Global init of sockets (Thanks Windows) */
+COSMIC_DLL int cosmic_socket_init();
+
 typedef struct cosmic_socket cosmic_socket_t;
 
 COSMIC_DLL cosmic_socket_t *cosmic_socket_new(const char *, const char *);

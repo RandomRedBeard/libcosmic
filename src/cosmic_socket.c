@@ -1,5 +1,14 @@
 #include "cosmic/cosmic_socket.h"
 
+int cosmic_socket_init() {
+#if defined(_WIN32) || (_WIN64)
+  WSADATA wsa;
+  return WSAStartup(MAKEWORD(2, 2), &wsa);
+#else
+  return 0;
+#endif
+}
+
 struct cosmic_io_vtable {
   ssize_t (*read)(cosmic_io_t *, char *, size_t);
   ssize_t (*write)(cosmic_io_t *, const char *, size_t);
