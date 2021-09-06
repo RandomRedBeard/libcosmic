@@ -27,6 +27,21 @@ COSMIC_DLL int cosmic_map_remove(cosmic_map_t *, const cosmic_any_t,
  */
 COSMIC_DLL cosmic_iterator_t *cosmic_map_iterator(const cosmic_map_t *);
 
+#ifdef USING_NAMESPACE_COSMIC
+
+typedef cosmic_map_t map_t;
+typedef cosmic_map_dealloc map_dealloc;
+
+#define map_new cosmic_map_new
+#define map_free cosmic_map_free
+#define map_size cosmic_map_size
+#define map_get_value cosmic_map_get_value
+#define map_add cosmic_map_add
+#define map_remove cosmic_map_remove
+#define map_iterator cosmic_map_iterator
+
+#endif
+
 #ifdef __cplusplus
 }
 #endif

@@ -146,6 +146,43 @@ COSMIC_DLL cosmic_json_t *cosmic_json_read_stream(cosmic_io_t *io);
  */
 COSMIC_DLL cosmic_json_t *cosmic_json_read_buffer(char *buf, size_t);
 
+#ifdef USING_NAMESPACE_COSMIC
+
+typedef cosmic_json_t json_t;
+
+#define json_equals cosmic_json_equals
+#define json_get_type cosmic_json_get_type
+#define json_size cosmic_json_size
+#define json_new_null cosmic_json_new_null
+#define json_new_number cosmic_json_new_number
+#define json_new_string cosmic_json_new_string
+#define json_new_bool cosmic_json_new_bool
+#define json_new_object cosmic_json_new_object
+#define json_new_list cosmic_json_new_list
+#define json_copy cosmic_json_copy
+#define json_free cosmic_json_free
+#define json_get_number cosmic_json_get_number
+#define json_get_string cosmic_json_get_string
+#define json_get_bool cosmic_json_get_bool
+#define json_get_object_value cosmic_json_get_object_value
+#define json_get_list_value cosmic_json_get_list_value
+#define json_set_number cosmic_json_set_number
+#define json_set_string cosmic_json_set_string
+#define json_set_bool cosmic_json_set_bool
+#define json_add_kv cosmic_json_add_kv
+#define json_add cosmic_json_add
+#define json_insert cosmic_json_insert
+#define json_remove_key cosmic_json_remove_key
+#define json_replace_key cosmic_json_replace_key
+#define json_remove cosmic_json_remove
+#define json_iterator cosmic_json_iterator
+#define json_write_stream cosmic_json_write_stream
+#define json_write_buffer cosmic_json_write_buffer
+#define json_read_stream cosmic_json_read_stream
+#define json_read_buffer cosmic_json_read_buffer
+
+#endif
+
 #ifdef __cplusplus
 }
 #endif
