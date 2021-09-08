@@ -1,4 +1,5 @@
 #include "cosmic/cosmic_map.h"
+#include <internal/cosmic_iterator.h>
 
 struct cosmic_map_node {
   cosmic_any_t k, v;
@@ -9,13 +10,6 @@ struct cosmic_map {
   size_t len;
   struct cosmic_map_node *head, *tail;
   cosmic_cmp cmp;
-};
-
-struct cosmic_iterator_vtable {
-  int (*next)(cosmic_iterator_t *, cosmic_any_t *);
-  int (*next_pair)(cosmic_iterator_t *, cosmic_pair_t *);
-  int (*has_next)(const cosmic_iterator_t *);
-  void (*close)(cosmic_iterator_t *);
 };
 
 struct cosmic_iterator {

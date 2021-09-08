@@ -1,4 +1,5 @@
 #include "cosmic/cosmic_list.h"
+#include "internal/cosmic_iterator.h"
 
 struct cosmic_list_node {
   size_t i;
@@ -9,13 +10,6 @@ struct cosmic_list_node {
 struct cosmic_list {
   size_t len;
   struct cosmic_list_node *head, *tail;
-};
-
-struct cosmic_iterator_vtable {
-  int (*next)(cosmic_iterator_t *, cosmic_any_t *);
-  int (*next_pair)(cosmic_iterator_t *, cosmic_pair_t *);
-  int (*has_next)(const cosmic_iterator_t *);
-  void (*close)(cosmic_iterator_t *);
 };
 
 struct cosmic_iterator {

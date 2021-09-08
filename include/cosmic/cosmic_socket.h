@@ -3,6 +3,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 
 #include <cosmic/cosmic_io.h>
 #include <cosmic/cosmic_lib.h>
@@ -43,15 +44,21 @@ COSMIC_DLL int cosmic_socket_init();
 
 typedef struct cosmic_socket cosmic_socket_t;
 
-COSMIC_DLL cosmic_socket_t *cosmic_socket_new(const char *, const char *);
+COSMIC_DLL cosmic_socket_t *cosmic_socket_new();
 COSMIC_DLL void cosmic_socket_free(cosmic_socket_t *);
 
 /**
  * Connectors
  */
 
-COSMIC_DLL int cosmic_socket_connect(cosmic_socket_t *);
-COSMIC_DLL int cosmic_socket_bind(cosmic_socket_t *);
+COSMIC_DLL int cosmic_socket_connect(cosmic_socket_t *, const struct sockaddr *,
+                                     socklen_t);
+COSMIC_DLL int cosmic_socket_connect_to_host(cosmic_socket_t *, const char *,
+                                             const char *);
+COSMIC_DLL int cosmic_socket_bind(cosmic_socket_t *, const struct sockaddr *,
+                                  socklen_t);
+COSMIC_DLL int cosmic_socket_bind_to_host(cosmic_socket_t *, const char *,
+                                          const char *);
 COSMIC_DLL int cosmic_socket_listen(cosmic_socket_t *, int);
 COSMIC_DLL cosmic_socket_t *cosmic_socket_accept(cosmic_socket_t *);
 
@@ -82,7 +89,39 @@ COSMIC_DLL void cosmic_socket_set_wpwait(cosmic_socket_t *, int);
 /* Return underlying io */
 COSMIC_DLL cosmic_io_t *cosmic_socket_get_io(cosmic_socket_t *);
 /* Return underlying handle */
+#ifdef _WIN32
+COSMIC_DLL SOCKET cosmic_socket_get_fd(cosmic_socket_t *);
+#else
 COSMIC_DLL int cosmic_socket_get_fd(cosmic_socket_t *);
+#endif
+
+#ifdef USING_NAMESPACE_COSMIC
+
+#define socket_init cosmic_socket_init
+
+typedef cosmic_socket_t csocket_t;
+
+#define socket_new cosmic_socket_new
+#define socket_free cosmic_socket_free
+#define socket_connect cosmic_socket_connect
+#define socket_connect_to_host cosmic_socket_connect_to_host
+#define socket_bind cosmic_socket_bind
+#define socket_bind_to_host cosmic_socket_bind_to_host
+#define socket_listen cosmic_socket_listen
+#define socket_accept cosmic_socket_accept
+#define socket_read cosmic_socket_read
+#define socket_write cosmic_socket_write
+#define socket_close cosmic_socket_close
+#define socket_rpoll cosmic_socket_rpoll
+#define socket_wpoll cosmic_socket_wpoll
+#define socket_shutdown cosmic_socket_shutdown
+#define socket_set_nonblock cosmic_socket_set_nonblock
+#define socket_set_rpwait cosmic_socket_set_rpwait
+#define socket_set_wpwait cosmic_socket_set_wpwait
+#define socket_get_io cosmic_socket_get_io
+#define socket_get_fd cosmic_socket_get_fd
+
+#endif
 
 #ifdef __cplusplus
 }

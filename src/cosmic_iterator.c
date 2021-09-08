@@ -1,11 +1,5 @@
 #include "cosmic/cosmic_iterator.h"
-
-struct cosmic_iterator_vtable {
-  int (*next)(cosmic_iterator_t *, cosmic_any_t *);
-  int (*next_pair)(cosmic_iterator_t *, cosmic_pair_t *);
-  int (*has_next)(const cosmic_iterator_t *);
-  void (*close)(cosmic_iterator_t *);
-};
+#include "internal/cosmic_iterator.h"
 
 struct cosmic_iterator {
   const struct cosmic_iterator_vtable *vtbl;

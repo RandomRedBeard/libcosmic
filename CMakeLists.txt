@@ -5,17 +5,18 @@ include(CTest)
 find_program(MEMORYCHECK_COMMAND valgrind)
 set(MEMORYCHECK_COMMAND_OPTIONS "--leak-check=full --show-leak-kinds=all")
 
+
 if (MSVC)
+    # DLL builder define
+    add_definitions(-DCOSMIC_DLL_EXPORT)
     add_compile_options(/W4 /WX)
 else()
-    add_compile_options(-Wall -Wextra -pedantic -Werror -std=c90 -ansi)
+    # Allow posix system calls for socket
+    add_definitions(-D_POSIX_C_SOURCE)
+    add_compile_options(-Wall -Wextra -pedantic -Werror -std=c99)
 endif()
 
 include_directories("${PROJECT_SOURCE_DIR}/include")
-
-# Add DLL flag for windows shared lib
-add_definitions(-DCOSMIC_DLL_EXPORT)
-add_definitions(-D_POSIX_C_SOURCE)
 
 file(GLOB COSMIC_SOURCE src/*.c)
 
@@ -45,4 +46,9 @@ add_test(NAME TEST_COSMIC_JSON_WRITE COMMAND test_cosmic_json_write)
 add_test(NAME TEST_COSMIC_JSON_READ COMMAND test_cosmic_json_read)
 add_test(NAME TEST_COSMIC_SOCKET COMMAND test_cosmic_socket)
 
-install(TARGETS cosmic DESTINATION ${PROJECT_SOURCE_DIR}/lib)
+install(
+    TARGETS cosmic 
+    LIBRARY DESTINATION ${PROJECT_SOURCE_DIR}/lib 
+    RUNTIME DESTINATION ${PROJECT_SOURCE_DIR}/bin 
+    ARCHIVE DESTINATION ${PROJECT_SOURCE_DIR}/lib
+)
