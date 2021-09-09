@@ -1,10 +1,5 @@
 #include "cosmic/cosmic_io.h"
-
-struct cosmic_io_vtable {
-  ssize_t (*read)(cosmic_io_t *, char *, size_t);
-  ssize_t (*write)(cosmic_io_t *, const char *, size_t);
-  int (*close)(cosmic_io_t *);
-};
+#include "internal/cosmic_io.h"
 
 struct cosmic_io {
   const struct cosmic_io_vtable *vtbl;
