@@ -7,9 +7,8 @@
 extern "C" {
 #endif
 
-void cosmic_json_error_ctor(cosmic_json_error_t *,
-                            enum cosmic_json_error, unsigned long,
-                            const char *);
+void cosmic_json_error_ctor(cosmic_json_error_t *, enum cosmic_json_error,
+                            ssize_t, const char *);
 /* Error build is only for internals */
 cosmic_json_t *cosmic_json_error_new(const cosmic_json_error_t);
 

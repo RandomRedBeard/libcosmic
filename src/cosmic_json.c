@@ -10,7 +10,7 @@ struct cosmic_json {
 cosmic_json_t *cosmic_json_new(enum cosmic_json_type, cosmic_any_t);
 
 void cosmic_json_error_ctor(cosmic_json_error_t *e,
-                            enum cosmic_json_error error, unsigned long index,
+                            enum cosmic_json_error error, ssize_t index,
                             const char *func_name) {
   e->error = error;
   e->index = index;

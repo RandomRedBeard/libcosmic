@@ -50,7 +50,7 @@ enum cosmic_json_error {
 
 typedef struct cosmic_json_error_st {
   enum cosmic_json_error error;
-  unsigned long index;
+  ssize_t index;
   const char *func_name;
 } cosmic_json_error_t;
 
