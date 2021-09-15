@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 2.8)
 project(cosmic)
 
+include(GNUInstallDirs)
+
 include(CTest)
 find_program(MEMORYCHECK_COMMAND valgrind)
 set(MEMORYCHECK_COMMAND_OPTIONS "--leak-check=full --show-leak-kinds=all")
@@ -18,6 +20,7 @@ endif()
 include_directories("${PROJECT_SOURCE_DIR}/include")
 
 file(GLOB COSMIC_SOURCE src/*.c)
+file(GLOB COSMIC_PUBLIC_HEADERS include/cosmic/*.h)
 
 add_library(cosmic SHARED ${COSMIC_SOURCE})
 add_library(cosmic-static STATIC ${COSMIC_SOURCE})
@@ -27,6 +30,9 @@ if (MSVC)
     target_compile_definitions(cosmic PUBLIC COSMIC_DLL_EXPORT)
     target_compile_definitions(cosmic-static PUBLIC COSMIC_STATIC)
 endif()
+
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/library_config/libcosmic.pc.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/libcosmic.pc" @ONLY)
 
 add_executable(test_cosmic_list tests/test_list.c)
 add_executable(test_cosmic_map tests/test_map.c)
@@ -54,7 +60,12 @@ add_test(NAME TEST_COSMIC_SOCKET COMMAND test_cosmic_socket)
 
 install(
     TARGETS cosmic cosmic-static
-    LIBRARY DESTINATION ${PROJECT_SOURCE_DIR}/lib 
-    RUNTIME DESTINATION ${PROJECT_SOURCE_DIR}/bin 
-    ARCHIVE DESTINATION ${PROJECT_SOURCE_DIR}/lib
+    LIBRARY DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_FULL_BINDIR}
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}
+    INCLUDES DESTINATION ${CMAKE_INSTALL_FULL_INCLUDEDIR}
 )
+install(FILES ${COSMIC_PUBLIC_HEADERS} DESTINATION "${CMAKE_INSTALL_FULL_INCLUDEDIR}/cosmic")
+install (FILES "${CMAKE_CURRENT_BINARY_DIR}/libcosmic.pc" DESTINATION "${CMAKE_INSTALL_FULL_LIBDIR}/pkgconfig")
+
+add_custom_target(uninstall "${CMAKE_COMMAND}" -P "${PROJECT_SOURCE_DIR}/library_config/uninstall.cmake")
