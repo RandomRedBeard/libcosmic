@@ -8,7 +8,6 @@ set(MEMORYCHECK_COMMAND_OPTIONS "--leak-check=full --show-leak-kinds=all")
 
 if (MSVC)
     # DLL builder define
-    add_definitions(-DCOSMIC_DLL_EXPORT)
     add_compile_options(/W4 /WX)
 else()
     # Allow posix system calls for socket
@@ -21,6 +20,13 @@ include_directories("${PROJECT_SOURCE_DIR}/include")
 file(GLOB COSMIC_SOURCE src/*.c)
 
 add_library(cosmic SHARED ${COSMIC_SOURCE})
+add_library(cosmic-static STATIC ${COSMIC_SOURCE})
+
+if (MSVC)
+    # Build static and shared with different defines
+    target_compile_definitions(cosmic PUBLIC COSMIC_DLL_EXPORT)
+    target_compile_definitions(cosmic-static PUBLIC COSMIC_STATIC)
+endif()
 
 add_executable(test_cosmic_list tests/test_list.c)
 add_executable(test_cosmic_map tests/test_map.c)
@@ -47,7 +53,7 @@ add_test(NAME TEST_COSMIC_JSON_READ COMMAND test_cosmic_json_read)
 add_test(NAME TEST_COSMIC_SOCKET COMMAND test_cosmic_socket)
 
 install(
-    TARGETS cosmic 
+    TARGETS cosmic cosmic-static
     LIBRARY DESTINATION ${PROJECT_SOURCE_DIR}/lib 
     RUNTIME DESTINATION ${PROJECT_SOURCE_DIR}/bin 
     ARCHIVE DESTINATION ${PROJECT_SOURCE_DIR}/lib

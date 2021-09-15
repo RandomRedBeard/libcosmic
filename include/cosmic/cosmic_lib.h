@@ -4,7 +4,7 @@
 #ifdef _WIN32
 #ifdef COSMIC_DLL_EXPORT
 #define COSMIC_DLL __declspec(dllexport)
-#elif defined(COSMIC_DEVELOP)
+#elif defined(COSMIC_STATIC)
 #define COSMIC_DLL
 #else
 #define COSMIC_DLL __declspec(dllimport)
