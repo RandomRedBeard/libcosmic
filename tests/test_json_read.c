@@ -65,11 +65,28 @@ void test_depth_read() {
   cosmic_json_free(j);
 }
 
+void test_invalid_read_prim() {
+  char *buf = "{\"key\": nulS}";
+  cosmic_json_t *j = cosmic_json_read_buffer(buf, strlen(buf));
+
+  assert(cosmic_json_get_type(j) == COSMIC_ERROR);
+  assert(cosmic_json_get_error_code(j) == COSMIC_UNEXPECTED_CHAR);
+
+  const cosmic_json_error_t *err = cosmic_json_get_error(j);
+  assert(err);
+
+  /* Should identify where the error happened for buffered IO */
+  assert(err->index == (strchr(buf, 'S') - buf));
+
+  cosmic_json_free(j);
+}
+
 int main() {
   test_read_object_number_string();
   test_read_list();
   test_io_bad();
   test_invalid_read();
   test_depth_read();
+  test_invalid_read_prim();
   return 0;
 }
