@@ -22,12 +22,16 @@ include_directories("${PROJECT_SOURCE_DIR}/include")
 file(GLOB COSMIC_SOURCE src/*.c)
 file(GLOB COSMIC_PUBLIC_HEADERS include/cosmic/*.h)
 
-add_library(cosmic SHARED ${COSMIC_SOURCE})
-add_library(cosmic-static STATIC ${COSMIC_SOURCE})
+option(BUILD_SHARED_LIB "Build shared libcosmic" ON)
+option(BUILD_STATIC_LIB "Build static libcosmic" ON)
 
-if (MSVC)
-    # Build static and shared with different defines
+if (BUILD_SHARED_LIB)
+    add_library(cosmic SHARED ${COSMIC_SOURCE})
     target_compile_definitions(cosmic PUBLIC COSMIC_DLL_EXPORT)
+endif()
+
+if (BUILD_STATIC_LIB)
+    add_library(cosmic-static STATIC ${COSMIC_SOURCE})
     target_compile_definitions(cosmic-static PUBLIC COSMIC_STATIC)
 endif()
 
@@ -58,13 +62,26 @@ add_test(NAME TEST_COSMIC_JSON_WRITE COMMAND test_cosmic_json_write)
 add_test(NAME TEST_COSMIC_JSON_READ COMMAND test_cosmic_json_read)
 add_test(NAME TEST_COSMIC_SOCKET COMMAND test_cosmic_socket)
 
-install(
-    TARGETS cosmic cosmic-static
-    LIBRARY DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}
-    RUNTIME DESTINATION ${CMAKE_INSTALL_FULL_BINDIR}
-    ARCHIVE DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}
-    INCLUDES DESTINATION ${CMAKE_INSTALL_FULL_INCLUDEDIR}
-)
+if (BUILD_SHARED_LIB)
+    install(
+        TARGETS cosmic
+        LIBRARY DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}
+        RUNTIME DESTINATION ${CMAKE_INSTALL_FULL_BINDIR}
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}
+        INCLUDES DESTINATION ${CMAKE_INSTALL_FULL_INCLUDEDIR}
+    )
+endif()
+
+if (BUILD_STATIC_LIB)
+    install(
+        TARGETS cosmic-static
+        LIBRARY DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}
+        RUNTIME DESTINATION ${CMAKE_INSTALL_FULL_BINDIR}
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}
+        INCLUDES DESTINATION ${CMAKE_INSTALL_FULL_INCLUDEDIR}
+    )
+endif()
+
 install(FILES ${COSMIC_PUBLIC_HEADERS} DESTINATION "${CMAKE_INSTALL_FULL_INCLUDEDIR}/cosmic")
 install (FILES "${CMAKE_CURRENT_BINARY_DIR}/libcosmic.pc" DESTINATION "${CMAKE_INSTALL_FULL_LIBDIR}/pkgconfig")
 
