@@ -13,12 +13,6 @@ void cosmic_json_error_ctor(cosmic_json_error_t *,
 /* Error build is only for internals */
 cosmic_json_t *cosmic_json_error_new(const cosmic_json_error_t);
 
-struct cosmic_json_rw_st {
-  cosmic_io_t *io;
-  unsigned int depth; /* Function depth */
-  cosmic_json_error_t *error;
-};
-
 #ifdef __cplusplus
 }
 ß

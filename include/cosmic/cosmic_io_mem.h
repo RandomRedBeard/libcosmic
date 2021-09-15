@@ -20,15 +20,6 @@ COSMIC_DLL void cosmic_io_mem_free(cosmic_io_t *);
 COSMIC_DLL ssize_t cosmic_io_mem_rsetpos(cosmic_io_t *, size_t);
 COSMIC_DLL ssize_t cosmic_io_mem_wsetpos(cosmic_io_t *, size_t);
 
-#ifdef USING_NAMESPACE_COSMIC
-
-#define io_mem_new cosmic_io_mem_new
-#define io_mem_free cosmic_io_mem_free
-#define io_mem_rsetpos cosmic_io_mem_rsetpos
-#define io_mem_wsetpos cosmic_io_mem_wsetpos
-
-#endif
-
 #ifdef __cplusplus
 }
 #endif

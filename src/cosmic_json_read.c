@@ -1,20 +1,26 @@
 #include "cosmic/cosmic_json.h"
 #include "internal/cosmic_json.h"
 
+struct cosmic_json_read_st {
+  cosmic_io_t *io;
+  unsigned int depth; /* Function depth */
+  cosmic_json_error_t *error;
+};
+
 /**
  * Increments function depth and check
  */
-int cosmic_json_rw_new_func(struct cosmic_json_rw_st *rw) {
+int cosmic_json_rw_new_func(struct cosmic_json_read_st *rw) {
   return ++rw->depth > COSMIC_MAX_DEPTH;
 }
 
-ssize_t cosmic_json_read_value(struct cosmic_json_rw_st rw, cosmic_json_t **,
+ssize_t cosmic_json_read_value(struct cosmic_json_read_st rw, cosmic_json_t **,
                                char, char *);
 
 /**
  * Read into c until expect, digit, or invalid character
  */
-ssize_t cosmic_json_seek_until(struct cosmic_json_rw_st rw, char *c,
+ssize_t cosmic_json_seek_until(struct cosmic_json_read_st rw, char *c,
                                const char *expect, int digit) {
   size_t i = 0;
   while (cosmic_io_read(rw.io, c, 1) > 0) {
@@ -45,7 +51,7 @@ ssize_t cosmic_json_seek_until(struct cosmic_json_rw_st rw, char *c,
  * Return number of bytes read into dest
  * Assumed dest is len + 1 for nullt
  */
-ssize_t cosmic_json_read_string(struct cosmic_json_rw_st rw, char *dest,
+ssize_t cosmic_json_read_string(struct cosmic_json_read_st rw, char *dest,
                                 size_t len) {
   char c, escape = 0;
   /**
@@ -100,7 +106,7 @@ ssize_t cosmic_json_read_string(struct cosmic_json_rw_st rw, char *dest,
 /**
  * Return 0 or -1
  */
-int cosmic_json_read_and_compare(struct cosmic_json_rw_st rw, const char *cmp) {
+int cosmic_json_read_and_compare(struct cosmic_json_read_st rw, const char *cmp) {
   char c;
   ssize_t n = 0;
   unsigned int len = 0;
@@ -140,7 +146,7 @@ enum cosmic_json_type cosmic_json_get_type_from_hint(char hint) {
   }
 }
 
-ssize_t cosmic_json_read_null(struct cosmic_json_rw_st rw, cosmic_json_t **j) {
+ssize_t cosmic_json_read_null(struct cosmic_json_read_st rw, cosmic_json_t **j) {
   const char *cmp = "ull";
   if (cosmic_json_read_and_compare(rw, cmp) < 0) {
     return -1;
@@ -150,7 +156,7 @@ ssize_t cosmic_json_read_null(struct cosmic_json_rw_st rw, cosmic_json_t **j) {
   return 3;
 }
 
-ssize_t cosmic_json_read_number(struct cosmic_json_rw_st rw, cosmic_json_t **j,
+ssize_t cosmic_json_read_number(struct cosmic_json_read_st rw, cosmic_json_t **j,
                                 char h, char *overflow) {
   /**
    * Read left to right into buf
@@ -214,7 +220,7 @@ ssize_t cosmic_json_read_number(struct cosmic_json_rw_st rw, cosmic_json_t **j,
 /**
  * Handles stack buffer allocation and rval check before creating json_string
  */
-ssize_t cosmic_json_read_json_string(struct cosmic_json_rw_st rw,
+ssize_t cosmic_json_read_json_string(struct cosmic_json_read_st rw,
                                      cosmic_json_t **j) {
   char buf[COSMIC_STRING_MAX_LEN + 1];
   ssize_t i = cosmic_json_read_string(rw, buf, COSMIC_STRING_MAX_LEN);
@@ -229,7 +235,7 @@ ssize_t cosmic_json_read_json_string(struct cosmic_json_rw_st rw,
 /**
  * String cmp with either "true" or "false"
  */
-ssize_t cosmic_json_read_bool(struct cosmic_json_rw_st rw, cosmic_json_t **j,
+ssize_t cosmic_json_read_bool(struct cosmic_json_read_st rw, cosmic_json_t **j,
                               char hint) {
   const char *cmp = NULL;
 
@@ -253,7 +259,7 @@ ssize_t cosmic_json_read_bool(struct cosmic_json_rw_st rw, cosmic_json_t **j,
   return strlen(cmp);
 }
 
-ssize_t cosmic_json_read_object(struct cosmic_json_rw_st rw,
+ssize_t cosmic_json_read_object(struct cosmic_json_read_st rw,
                                 cosmic_json_t **obj) {
   ssize_t j = 0;
   size_t i = 0;
@@ -355,7 +361,7 @@ ssize_t cosmic_json_read_object(struct cosmic_json_rw_st rw,
   return i;
 }
 
-ssize_t cosmic_json_read_list(struct cosmic_json_rw_st rw,
+ssize_t cosmic_json_read_list(struct cosmic_json_read_st rw,
                               cosmic_json_t **list) {
   ssize_t j = 0;
   size_t i = 0;
@@ -426,7 +432,7 @@ ssize_t cosmic_json_read_list(struct cosmic_json_rw_st rw,
   return i;
 }
 
-ssize_t cosmic_json_read_value(struct cosmic_json_rw_st rw, cosmic_json_t **j,
+ssize_t cosmic_json_read_value(struct cosmic_json_read_st rw, cosmic_json_t **j,
                                char hint, char *overflow) {
   enum cosmic_json_type type = cosmic_json_get_type_from_hint(hint);
   switch (type) {
@@ -454,7 +460,7 @@ cosmic_json_t *cosmic_json_read_stream(cosmic_io_t *io) {
   char buf, overflow = 0;
   cosmic_json_t *json = NULL;
   cosmic_json_error_t error;
-  struct cosmic_json_rw_st rw;
+  struct cosmic_json_read_st rw;
 
   error.error = COSMIC_NONE;
   error.func_name = NULL;

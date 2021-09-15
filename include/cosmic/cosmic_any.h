@@ -41,19 +41,9 @@ COSMIC_DLL cosmic_pair_t COSMIC_PAIR(cosmic_any_t, cosmic_any_t);
  */
 
 #ifdef USING_NAMESPACE_COSMIC
-
 typedef cosmic_any_t any_t;
 typedef cosmic_pair_t pair_t;
 typedef cosmic_cmp cmp;
-
-#define ANY COSMIC_ANY
-#define ANY_CONST COSMIC_ANY_CONST
-#define PANY PCOSMIC_ANY
-#define ANY_L COSMIC_ANY_L
-#define ANY_D COSMIC_ANY_D
-#define ANY_UL COSMIC_ANY_UL
-#define PAIR COSMIC_PAIR
-
 #endif
 
 #ifdef __cplusplus
