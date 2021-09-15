@@ -25,14 +25,28 @@ file(GLOB COSMIC_PUBLIC_HEADERS include/cosmic/*.h)
 option(BUILD_SHARED_LIB "Build shared libcosmic" ON)
 option(BUILD_STATIC_LIB "Build static libcosmic" ON)
 
+if (NOT BUILD_SHARED_LIB AND NOT BUILD_STATIC_LIB)
+    message(FATAL_ERROR "Nothing to build")
+endif()
+
+set(cosmic_targets)
+
 if (BUILD_SHARED_LIB)
     add_library(cosmic SHARED ${COSMIC_SOURCE})
     target_compile_definitions(cosmic PUBLIC COSMIC_DLL_EXPORT)
+    set(cosmic_targets cosmic)
 endif()
 
 if (BUILD_STATIC_LIB)
     add_library(cosmic-static STATIC ${COSMIC_SOURCE})
     target_compile_definitions(cosmic-static PUBLIC COSMIC_STATIC)
+    set(cosmic_targets ${cosmic_targets} cosmic-static)
+endif()
+
+# Which lib to link against (default to shared)
+set(cosmic_lib cosmic)
+if (NOT BUILD_SHARED_LIB)
+    set(cosmic_lib cosmic-static)
 endif()
 
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/library_config/libcosmic.pc.in"
@@ -46,13 +60,13 @@ add_executable(test_cosmic_json_write tests/test_json_write.c)
 add_executable(test_cosmic_json_read tests/test_json_read.c)
 add_executable(test_cosmic_socket tests/test_socket.c)
 
-target_link_libraries(test_cosmic_list cosmic)
-target_link_libraries(test_cosmic_map cosmic)
-target_link_libraries(test_cosmic_io_mem cosmic)
-target_link_libraries(test_cosmic_json cosmic)
-target_link_libraries(test_cosmic_json_write cosmic)
-target_link_libraries(test_cosmic_json_read cosmic)
-target_link_libraries(test_cosmic_socket cosmic)
+target_link_libraries(test_cosmic_list ${cosmic_lib})
+target_link_libraries(test_cosmic_map ${cosmic_lib})
+target_link_libraries(test_cosmic_io_mem ${cosmic_lib})
+target_link_libraries(test_cosmic_json ${cosmic_lib})
+target_link_libraries(test_cosmic_json_write ${cosmic_lib})
+target_link_libraries(test_cosmic_json_read ${cosmic_lib})
+target_link_libraries(test_cosmic_socket ${cosmic_lib})
 
 add_test(NAME TEST_COSMIC_LIST COMMAND test_cosmic_list)
 add_test(NAME TEST_COSMIC_MAP COMMAND test_cosmic_map)
@@ -62,25 +76,13 @@ add_test(NAME TEST_COSMIC_JSON_WRITE COMMAND test_cosmic_json_write)
 add_test(NAME TEST_COSMIC_JSON_READ COMMAND test_cosmic_json_read)
 add_test(NAME TEST_COSMIC_SOCKET COMMAND test_cosmic_socket)
 
-if (BUILD_SHARED_LIB)
-    install(
-        TARGETS cosmic
-        LIBRARY DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}
-        RUNTIME DESTINATION ${CMAKE_INSTALL_FULL_BINDIR}
-        ARCHIVE DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}
-        INCLUDES DESTINATION ${CMAKE_INSTALL_FULL_INCLUDEDIR}
-    )
-endif()
-
-if (BUILD_STATIC_LIB)
-    install(
-        TARGETS cosmic-static
-        LIBRARY DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}
-        RUNTIME DESTINATION ${CMAKE_INSTALL_FULL_BINDIR}
-        ARCHIVE DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}
-        INCLUDES DESTINATION ${CMAKE_INSTALL_FULL_INCLUDEDIR}
-    )
-endif()
+install(
+    TARGETS ${cosmic_targets}
+    LIBRARY DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_FULL_BINDIR}
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}
+    INCLUDES DESTINATION ${CMAKE_INSTALL_FULL_INCLUDEDIR}
+)
 
 install(FILES ${COSMIC_PUBLIC_HEADERS} DESTINATION "${CMAKE_INSTALL_FULL_INCLUDEDIR}/cosmic")
 install (FILES "${CMAKE_CURRENT_BINARY_DIR}/libcosmic.pc" DESTINATION "${CMAKE_INSTALL_FULL_LIBDIR}/pkgconfig")
