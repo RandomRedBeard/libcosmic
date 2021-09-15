@@ -395,11 +395,12 @@ int cosmic_json_remove_key(cosmic_json_t *j, const char *k,
 
 ssize_t cosmic_json_replace_key(cosmic_json_t *j, const char *k,
                                 cosmic_json_t *r, cosmic_json_t **dest) {
+  int i;
   if (r->type == COSMIC_ERROR) {
     return -1;
   }
 
-  int i = cosmic_json_remove_key(j, k, dest);
+  i = cosmic_json_remove_key(j, k, dest);
   if (i == -1) {
     return i;
   }

@@ -31,7 +31,7 @@ void test_connect() {
 
   while ((i = cosmic_socket_read(s, buf, 1023)) > 0) {
     *(buf + i) = 0;
-    printf("%zd\n", i);
+    printf("%ld\n", (long)i);
   }
 
   cosmic_socket_free(s);
@@ -81,19 +81,19 @@ void test_socket_pair() {
 
   /* Close master */
   i = cosmic_socket_close(master);
-  printf("Close %zd\n", i);
+  printf("Close %ld\n", (long)i);
 
   sio = cosmic_socket_get_io(server);
   cio = cosmic_socket_get_io(client);
 
   i = cosmic_io_write(sio, "test", 4);
   assert(i > 0);
-  printf("Wrote %zd\n", i);
+  printf("Wrote %ld\n", (long)i);
 
   i = cosmic_io_read(cio, buf, 1023);
   assert(i > 0);
   *(buf + i) = 0;
-  printf("Recieved %zd - %s\n", i, buf);
+  printf("Recieved %ld - %s\n", (long)i, buf);
 
   assert(strcmp(buf, "test") == 0);
 

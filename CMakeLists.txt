@@ -13,7 +13,7 @@ if (MSVC)
 else()
     # Allow posix system calls for socket
     add_definitions(-D_POSIX_C_SOURCE)
-    add_compile_options(-Wall -Wextra -pedantic -Werror -std=c99)
+    add_compile_options(-Wall -Wextra -pedantic -Werror -ansi)
 endif()
 
 include_directories("${PROJECT_SOURCE_DIR}/include")
