@@ -5,6 +5,28 @@ struct cosmic_json {
   cosmic_any_t o;
 };
 
+/* Internals */
+
+cosmic_json_t *cosmic_json_new(enum cosmic_json_type, cosmic_any_t);
+
+void cosmic_json_error_ctor(cosmic_json_error_t *e,
+                            enum cosmic_json_error error, unsigned long index,
+                            const char *func_name) {
+  e->error = error;
+  e->index = index;
+  e->func_name = func_name;
+}
+
+cosmic_json_t *cosmic_json_error_new(const cosmic_json_error_t re) {
+  cosmic_json_error_t *e = malloc(sizeof(cosmic_json_error_t));
+  *e = re;
+  return cosmic_json_new(COSMIC_ERROR, COSMIC_ANY(e));
+}
+
+void cosmic_json_error_free(cosmic_json_error_t *e) { free(e); }
+
+/* End internals */
+
 int cosmic_json_raw_equals(const cosmic_json_t *j1, const cosmic_json_t *j2) {
   return j1->o.vp == j2->o.vp;
 }
@@ -75,19 +97,16 @@ int cosmic_json_equals(const cosmic_json_t *j1, const cosmic_json_t *j2) {
     return 0;
   }
 
-  if (j1->type == COSMIC_OBJECT) {
+  switch (j1->type) {
+  case COSMIC_OBJECT:
     return cosmic_json_object_equals(j1, j2);
-  }
-
-  if (j1->type == COSMIC_LIST) {
+  case COSMIC_LIST:
     return cosmic_json_list_equals(j1, j2);
-  }
-
-  if (j1->type == COSMIC_STRING) {
+  case COSMIC_STRING:
     return cosmic_json_string_equals(j1, j2);
+  default:
+    return cosmic_json_raw_equals(j1, j2);
   }
-
-  return cosmic_json_raw_equals(j1, j2);
 }
 
 enum cosmic_json_type cosmic_json_get_type(const cosmic_json_t *j) {
@@ -118,6 +137,15 @@ const char *cosmic_json_get_string(const cosmic_json_t *j) {
 
 long cosmic_json_get_bool(const cosmic_json_t *j) {
   return j->type == COSMIC_BOOL ? j->o.l : 0;
+}
+
+const cosmic_json_error_t *cosmic_json_get_error(const cosmic_json_t *j) {
+  return j->type == COSMIC_ERROR ? j->o.vp : NULL;
+}
+
+enum cosmic_json_error cosmic_json_get_error_code(const cosmic_json_t *j) {
+  const cosmic_json_error_t *err = cosmic_json_get_error(j);
+  return err ? err->error : COSMIC_NONE;
 }
 
 /**
@@ -278,6 +306,8 @@ cosmic_json_t *cosmic_json_copy(const cosmic_json_t *j) {
     return cosmic_json_copy_object(j);
   case COSMIC_LIST:
     return cosmic_json_copy_list(j);
+  default: /* We don't need to copy errors */
+    break;
   }
 
   return NULL;
@@ -291,12 +321,21 @@ void cosmic_json_map_dealloc(cosmic_pair_t p) {
 void cosmic_json_list_dealloc(cosmic_any_t o) { cosmic_json_free(o.vp); }
 
 void cosmic_json_free(cosmic_json_t *j) {
-  if (j->type == COSMIC_OBJECT) {
+  switch (j->type) {
+  case COSMIC_OBJECT:
     cosmic_map_free(j->o.vp, cosmic_json_map_dealloc);
-  } else if (j->type == COSMIC_LIST) {
+    break;
+  case COSMIC_LIST:
     cosmic_list_free(j->o.vp, cosmic_json_list_dealloc);
-  } else if (j->type == COSMIC_STRING) {
+    break;
+  case COSMIC_STRING:
     free(j->o.vp);
+    break;
+  case COSMIC_ERROR:
+    cosmic_json_error_free(j->o.vp);
+    break;
+  default:
+    break;
   }
 
   free(j);
@@ -307,7 +346,7 @@ ssize_t cosmic_json_add_kv(cosmic_json_t *root, const char *k,
   /**
    * Type checking
    */
-  if (root->type != COSMIC_OBJECT) {
+  if (root->type != COSMIC_OBJECT || v->type == COSMIC_ERROR) {
     return -1;
   }
 
@@ -315,7 +354,7 @@ ssize_t cosmic_json_add_kv(cosmic_json_t *root, const char *k,
 }
 
 ssize_t cosmic_json_add(cosmic_json_t *list, cosmic_json_t *v) {
-  if (list->type != COSMIC_LIST) {
+  if (list->type != COSMIC_LIST || v->type == COSMIC_ERROR) {
     return -1;
   }
 
@@ -323,7 +362,7 @@ ssize_t cosmic_json_add(cosmic_json_t *list, cosmic_json_t *v) {
 }
 
 ssize_t cosmic_json_insert(cosmic_json_t *list, size_t i, cosmic_json_t *v) {
-  if (list->type != COSMIC_LIST) {
+  if (list->type != COSMIC_LIST || v->type == COSMIC_ERROR) {
     return -1;
   }
 
@@ -356,6 +395,10 @@ int cosmic_json_remove_key(cosmic_json_t *j, const char *k,
 
 ssize_t cosmic_json_replace_key(cosmic_json_t *j, const char *k,
                                 cosmic_json_t *r, cosmic_json_t **dest) {
+  if (r->type == COSMIC_ERROR) {
+    return -1;
+  }
+
   int i = cosmic_json_remove_key(j, k, dest);
   if (i == -1) {
     return i;

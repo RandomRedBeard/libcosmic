@@ -54,7 +54,8 @@ ssize_t cosmic_json_write_number(const cosmic_json_t *j, cosmic_io_t *io) {
   char buf[COSMIC_NUMBER_BUFFER_LEN + 1];
   int i;
   /* Check write length */
-  if ((i = snprintf(buf, COSMIC_NUMBER_BUFFER_LEN, "%.4f",
+  if ((i = snprintf(buf, COSMIC_NUMBER_BUFFER_LEN,
+                    COSMIC_NUMBER_WRITE_PRECISION,
                     cosmic_json_get_number(j))) >= COSMIC_NUMBER_BUFFER_LEN) {
     return -1;
   }
@@ -275,6 +276,8 @@ ssize_t cosmic_json_write_value(const cosmic_json_t *j, cosmic_io_t *io,
     return cosmic_json_write_object(j, io, indent, idepth);
   case COSMIC_LIST:
     return cosmic_json_write_list(j, io, indent, idepth);
+  default:
+    break;
   }
 
   return -1;

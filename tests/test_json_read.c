@@ -6,7 +6,7 @@ void test_read_object_number_string() {
   char *buf = "{ \"k\": 123, \"k1\": \"thomas\"}";
   cosmic_json_t *j = cosmic_json_read_buffer(buf, strlen(buf));
   const cosmic_json_t *child = NULL;
-  assert(j);
+  assert(cosmic_json_get_error_code(j) == COSMIC_NONE);
 
   child = cosmic_json_get_object_value(j, "k");
   assert(cosmic_json_get_type(child) == COSMIC_NUMBER);
@@ -16,12 +16,12 @@ void test_read_object_number_string() {
 }
 
 void test_read_list() {
-  char *buf =
-      "     \n\n[\"thomas\", \"is\", \"named\", \"\\\"Mr. Jansen\\\"\", \"3\\\\4\"]";
+  char *buf = "     \n\n[\"thomas\", \"is\", \"named\", \"\\\"Mr. "
+              "Jansen\\\"\", \"3\\\\4\"]";
   cosmic_json_t *j = cosmic_json_read_buffer(buf, strlen(buf));
   const cosmic_json_t *child = NULL;
 
-  assert(j);
+  assert(cosmic_json_get_error_code(j) == COSMIC_NONE);
 
   child = cosmic_json_get_list_value(j, 3);
   assert(child);
@@ -35,8 +35,41 @@ void test_read_list() {
   cosmic_json_free(j);
 }
 
+void test_io_bad() {
+  char *buf = "{\"key\": ";
+  cosmic_json_t *j = cosmic_json_read_buffer(buf, strlen(buf));
+
+  assert(cosmic_json_get_type(j) == COSMIC_ERROR);
+  assert(cosmic_json_get_error_code(j) == COSMIC_IO_ERROR);
+
+  cosmic_json_free(j);
+}
+
+void test_invalid_read() {
+  char *buf = "{\"key\": {123";
+  cosmic_json_t *j = cosmic_json_read_buffer(buf, strlen(buf));
+
+  assert(cosmic_json_get_type(j) == COSMIC_ERROR);
+  assert(cosmic_json_get_error_code(j) == COSMIC_UNEXPECTED_CHAR);
+
+  cosmic_json_free(j);
+}
+
+void test_depth_read() {
+  char *buf = "[[[[[[[[[[[[[[";
+  cosmic_json_t *j = cosmic_json_read_buffer(buf, strlen(buf));
+
+  assert(cosmic_json_get_type(j) == COSMIC_ERROR);
+  assert(cosmic_json_get_error_code(j) == COSMIC_MAX_DEPTH_ERROR);
+
+  cosmic_json_free(j);
+}
+
 int main() {
   test_read_object_number_string();
   test_read_list();
+  test_io_bad();
+  test_invalid_read();
+  test_depth_read();
   return 0;
 }

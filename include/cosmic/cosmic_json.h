@@ -16,6 +16,15 @@
 extern "C" {
 #endif
 
+/* Max object depth for read/write */
+#ifndef COSMIC_MAX_DEPTH
+#define COSMIC_MAX_DEPTH 10
+#endif
+
+#ifndef COSMIC_NUMBER_WRITE_PRECISION
+#define COSMIC_NUMBER_WRITE_PRECISION "%.4f"
+#endif
+
 #define COSMIC_NUMBER_BUFFER_LEN 32
 #define COSMIC_STRING_MAX_LEN 1024
 #define COSMIC_JSON_WHITESPACE " \n\t\r"
@@ -28,8 +37,22 @@ enum cosmic_json_type {
   COSMIC_STRING,
   COSMIC_BOOL,
   COSMIC_OBJECT,
-  COSMIC_LIST
+  COSMIC_LIST,
+  COSMIC_ERROR
 };
+
+enum cosmic_json_error {
+  COSMIC_NONE,
+  COSMIC_IO_ERROR,
+  COSMIC_UNEXPECTED_CHAR,
+  COSMIC_MAX_DEPTH_ERROR
+};
+
+typedef struct cosmic_json_error_st {
+  enum cosmic_json_error error;
+  unsigned long index;
+  const char *func_name;
+} cosmic_json_error_t;
 
 COSMIC_DLL int cosmic_json_equals(const cosmic_json_t *, const cosmic_json_t *);
 COSMIC_DLL enum cosmic_json_type cosmic_json_get_type(const cosmic_json_t *);
@@ -63,6 +86,10 @@ COSMIC_DLL void cosmic_json_free(cosmic_json_t *);
 COSMIC_DLL double cosmic_json_get_number(const cosmic_json_t *);
 COSMIC_DLL const char *cosmic_json_get_string(const cosmic_json_t *);
 COSMIC_DLL long cosmic_json_get_bool(const cosmic_json_t *);
+COSMIC_DLL const cosmic_json_error_t *
+cosmic_json_get_error(const cosmic_json_t *);
+COSMIC_DLL enum cosmic_json_error
+cosmic_json_get_error_code(const cosmic_json_t *);
 
 /**
  * Get complex type
