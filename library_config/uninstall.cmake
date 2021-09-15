@@ -15,5 +15,3 @@ foreach(file ${files})
         message(STATUS "Does-not-exist: \"${file}\"")
     endif()
 endforeach(file)
-
-message("PATH ${CMAKE_INSTALL_FULL_LIBDIR}")
