@@ -22,22 +22,22 @@ include_directories("${PROJECT_SOURCE_DIR}/include")
 file(GLOB COSMIC_SOURCE src/*.c)
 file(GLOB COSMIC_PUBLIC_HEADERS include/cosmic/*.h)
 
-option(BUILD_SHARED_LIB "Build shared libcosmic" ON)
-option(BUILD_STATIC_LIB "Build static libcosmic" ON)
+option(COSMIC_SHARED "Build shared libcosmic" ON)
+option(COSMIC_STATIC "Build static libcosmic" ON)
 
-if (NOT BUILD_SHARED_LIB AND NOT BUILD_STATIC_LIB)
+if (NOT COSMIC_SHARED AND NOT COSMIC_STATIC)
     message(FATAL_ERROR "Nothing to build")
 endif()
 
 set(cosmic_targets)
 
-if (BUILD_SHARED_LIB)
+if (COSMIC_SHARED)
     add_library(cosmic SHARED ${COSMIC_SOURCE})
     target_compile_definitions(cosmic PUBLIC COSMIC_DLL_EXPORT)
     set(cosmic_targets cosmic)
 endif()
 
-if (BUILD_STATIC_LIB)
+if (COSMIC_STATIC)
     add_library(cosmic-static STATIC ${COSMIC_SOURCE})
     target_compile_definitions(cosmic-static PUBLIC COSMIC_STATIC)
     set(cosmic_targets ${cosmic_targets} cosmic-static)
@@ -45,7 +45,7 @@ endif()
 
 # Which lib to link against (default to shared)
 set(cosmic_lib cosmic)
-if (NOT BUILD_SHARED_LIB)
+if (NOT COSMIC_SHARED)
     set(cosmic_lib cosmic-static)
 endif()
 
@@ -78,13 +78,13 @@ add_test(NAME TEST_COSMIC_SOCKET COMMAND test_cosmic_socket)
 
 install(
     TARGETS ${cosmic_targets}
-    LIBRARY DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}
-    RUNTIME DESTINATION ${CMAKE_INSTALL_FULL_BINDIR}
-    ARCHIVE DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}
-    INCLUDES DESTINATION ${CMAKE_INSTALL_FULL_INCLUDEDIR}
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
 )
 
-install(FILES ${COSMIC_PUBLIC_HEADERS} DESTINATION "${CMAKE_INSTALL_FULL_INCLUDEDIR}/cosmic")
-install (FILES "${CMAKE_CURRENT_BINARY_DIR}/libcosmic.pc" DESTINATION "${CMAKE_INSTALL_FULL_LIBDIR}/pkgconfig")
+install(FILES ${COSMIC_PUBLIC_HEADERS} DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/cosmic")
+install (FILES "${CMAKE_CURRENT_BINARY_DIR}/libcosmic.pc" DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig")
 
 add_custom_target(uninstall "${CMAKE_COMMAND}" -P "${PROJECT_SOURCE_DIR}/library_config/uninstall.cmake")
