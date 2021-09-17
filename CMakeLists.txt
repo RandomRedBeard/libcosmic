@@ -17,7 +17,7 @@ else()
     add_compile_options(-Wall -Wextra -pedantic -Werror -ansi)
 endif()
 
-include_directories("${PROJECT_SOURCE_DIR}/include")
+include_directories(include)
 
 file(GLOB COSMIC_SOURCE src/*.c)
 file(GLOB COSMIC_PUBLIC_HEADERS include/cosmic/*.h)
@@ -87,4 +87,4 @@ install(
 install(FILES ${COSMIC_PUBLIC_HEADERS} DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/cosmic")
 install (FILES "${CMAKE_CURRENT_BINARY_DIR}/libcosmic.pc" DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig")
 
-add_custom_target(uninstall "${CMAKE_COMMAND}" -P "${PROJECT_SOURCE_DIR}/library_config/uninstall.cmake")
+add_custom_target(uninstall "${CMAKE_COMMAND}" -P "library_config/uninstall.cmake")
