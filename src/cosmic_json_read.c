@@ -78,6 +78,12 @@ ssize_t cosmic_json_read_string(struct cosmic_json_read_st rw, char *dest,
       escape = 0;
     }
 
+    /* Newline */
+    if (c == 'n' && escape) {
+      c = '\n';
+      escape = 0;
+    }
+
     /* Floating escape */
     if (escape) {
       cosmic_json_error_ctor(rw.error, COSMIC_UNEXPECTED_CHAR, j, __func__);
@@ -184,12 +190,12 @@ ssize_t cosmic_json_read_number(struct cosmic_json_read_st rw,
      *  Only happens once
      * We know this is invalid json (not number)
      */
-    if (h == '-' && n == 0) {
+    if (h == '-' && n != 0) {
       cosmic_json_error_ctor(rw.error, COSMIC_UNEXPECTED_CHAR, i, __func__);
       return -1;
     }
 
-    if (!isdigit(h) && h != '.') {
+    if (h != '-' && !isdigit(h) && h != '.') {
       break;
     }
 
