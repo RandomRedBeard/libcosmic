@@ -78,9 +78,19 @@ ssize_t cosmic_json_read_string(struct cosmic_json_read_st rw, char *dest,
       escape = 0;
     }
 
-    /* Newline */
+    /* Special characters */
     if (c == 'n' && escape) {
       c = '\n';
+      escape = 0;
+    }
+
+    if (c == 'r' && escape) {
+      c = '\r';
+      escape = 0;
+    }
+
+    if (c == 'b' && escape) {
+      c = '\b';
       escape = 0;
     }
 

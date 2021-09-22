@@ -82,6 +82,20 @@ void test_invalid_read_prim() {
   cosmic_json_free(j);
 }
 
+void test_special_char() {
+  char *buf = "{\"key\\n\": \"value\\ra\"}";
+  cosmic_json_t *j = cosmic_json_read_buffer(buf, strlen(buf));
+  const cosmic_json_t *child = NULL;
+
+  assert(cosmic_json_get_error_code(j) == COSMIC_NONE);
+  child = cosmic_json_get_object_value(j, "key\n");
+  assert(child);
+  assert(strcmp(cosmic_json_get_string(child), "value\ra") == 0);
+  puts(cosmic_json_get_string(child));
+  printf("%lu\n", strlen(cosmic_json_get_string(child)));
+  cosmic_json_free(j);
+}
+
 int main() {
   test_read_object_number_string();
   test_read_list();
@@ -89,5 +103,6 @@ int main() {
   test_invalid_read();
   test_depth_read();
   test_invalid_read_prim();
+  test_special_char();
   return 0;
 }
