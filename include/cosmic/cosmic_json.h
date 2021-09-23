@@ -97,6 +97,12 @@ cosmic_json_get_error_code(const cosmic_json_t *);
 
 COSMIC_DLL const cosmic_json_t *
 cosmic_json_get_object_value(const cosmic_json_t *, const char *);
+COSMIC_DLL double cosmic_json_get_object_value_n(const cosmic_json_t *,
+                                                 const char *);
+COSMIC_DLL const char *cosmic_json_get_object_value_s(const cosmic_json_t *,
+                                                      const char *);
+COSMIC_DLL long cosmic_json_get_object_value_b(const cosmic_json_t *,
+                                               const char *);
 COSMIC_DLL const cosmic_json_t *
 cosmic_json_get_list_value(const cosmic_json_t *, size_t);
 

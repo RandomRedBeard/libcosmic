@@ -168,6 +168,23 @@ const cosmic_json_t *cosmic_json_get_object_value(const cosmic_json_t *root,
   return v;
 }
 
+double cosmic_json_get_object_value_n(const cosmic_json_t *root,
+                                      const char *k) {
+  const cosmic_json_t *j = cosmic_json_get_object_value(root, k);
+  return j ? cosmic_json_get_number(j) : 0;
+}
+
+const char *cosmic_json_get_object_value_s(const cosmic_json_t *root,
+                                           const char *k) {
+  const cosmic_json_t *j = cosmic_json_get_object_value(root, k);
+  return j ? cosmic_json_get_string(j) : NULL;
+}
+
+long cosmic_json_get_object_value_b(const cosmic_json_t *root, const char *k) {
+  const cosmic_json_t *j = cosmic_json_get_object_value(root, k);
+  return j ? cosmic_json_get_bool(j) : 0;
+}
+
 const cosmic_json_t *cosmic_json_get_list_value(const cosmic_json_t *root,
                                                 size_t i) {
   cosmic_json_t *v = NULL;
