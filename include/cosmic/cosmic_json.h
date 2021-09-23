@@ -120,6 +120,10 @@ COSMIC_DLL int cosmic_json_set_bool(cosmic_json_t *, long);
  */
 COSMIC_DLL ssize_t cosmic_json_add_kv(cosmic_json_t *, const char *,
                                       cosmic_json_t *);
+COSMIC_DLL ssize_t cosmic_json_add_kv_n(cosmic_json_t *, const char *, double);
+COSMIC_DLL ssize_t cosmic_json_add_kv_s(cosmic_json_t *, const char *,
+                                        const char *);
+COSMIC_DLL ssize_t cosmic_json_add_kv_b(cosmic_json_t *, const char *, long);
 /**
  * Add object to list
  * Assumes ownership

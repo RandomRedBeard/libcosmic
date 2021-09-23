@@ -370,6 +370,34 @@ ssize_t cosmic_json_add_kv(cosmic_json_t *root, const char *k,
   return cosmic_map_add(root->o.vp, COSMIC_ANY(strdup(k)), COSMIC_ANY(v));
 }
 
+ssize_t cosmic_json_add_kv_n(cosmic_json_t *root, const char *k, double d) {
+  cosmic_json_t *j = cosmic_json_new_number(d);
+  ssize_t i = cosmic_json_add_kv(root, k, j);
+  if (i < 0) {
+    cosmic_json_free(j);
+  }
+  return i;
+}
+
+ssize_t cosmic_json_add_kv_s(cosmic_json_t *root, const char *k,
+                             const char *s) {
+  cosmic_json_t *j = cosmic_json_new_string(s);
+  ssize_t i = cosmic_json_add_kv(root, k, j);
+  if (i < 0) {
+    cosmic_json_free(j);
+  }
+  return i;
+}
+
+ssize_t cosmic_json_add_kv_b(cosmic_json_t *root, const char *k, long l) {
+  cosmic_json_t *j = cosmic_json_new_bool(l);
+  ssize_t i = cosmic_json_add_kv(root, k, j);
+  if (i < 0) {
+    cosmic_json_free(j);
+  }
+  return i;
+}
+
 ssize_t cosmic_json_add(cosmic_json_t *list, cosmic_json_t *v) {
   if (list->type != COSMIC_LIST || v->type == COSMIC_ERROR) {
     return -1;
