@@ -4,7 +4,7 @@
 
 void test_read_object_number_string() {
   char *buf = "{ \"k\": 123, \"k1\": \"thomas\"}";
-  cosmic_json_t *j = cosmic_json_read_buffer(buf, strlen(buf));
+  cosmic_json_t *j = cosmic_json_read_buffer(buf, strlen(buf), 10);
   const cosmic_json_t *child = NULL;
   assert(cosmic_json_get_error_code(j) == COSMIC_NONE);
 
@@ -18,7 +18,7 @@ void test_read_object_number_string() {
 void test_read_list() {
   char *buf = "     \n\n[\"thomas\", \"is\", \"named\", \"\\\"Mr. "
               "Jansen\\\"\", \"3\\\\4\"]";
-  cosmic_json_t *j = cosmic_json_read_buffer(buf, strlen(buf));
+  cosmic_json_t *j = cosmic_json_read_buffer(buf, strlen(buf), 10);
   const cosmic_json_t *child = NULL;
 
   assert(cosmic_json_get_error_code(j) == COSMIC_NONE);
@@ -37,7 +37,7 @@ void test_read_list() {
 
 void test_io_bad() {
   char *buf = "{\"key\": ";
-  cosmic_json_t *j = cosmic_json_read_buffer(buf, strlen(buf));
+  cosmic_json_t *j = cosmic_json_read_buffer(buf, strlen(buf), 10);
 
   assert(cosmic_json_get_type(j) == COSMIC_ERROR);
   assert(cosmic_json_get_error_code(j) == COSMIC_IO_ERROR);
@@ -47,7 +47,7 @@ void test_io_bad() {
 
 void test_invalid_read() {
   char *buf = "{\"key\": {123";
-  cosmic_json_t *j = cosmic_json_read_buffer(buf, strlen(buf));
+  cosmic_json_t *j = cosmic_json_read_buffer(buf, strlen(buf), 10);
 
   assert(cosmic_json_get_type(j) == COSMIC_ERROR);
   assert(cosmic_json_get_error_code(j) == COSMIC_UNEXPECTED_CHAR);
@@ -57,7 +57,7 @@ void test_invalid_read() {
 
 void test_depth_read() {
   char *buf = "[[[[[[[[[[[[[[";
-  cosmic_json_t *j = cosmic_json_read_buffer(buf, strlen(buf));
+  cosmic_json_t *j = cosmic_json_read_buffer(buf, strlen(buf), 10);
 
   assert(cosmic_json_get_type(j) == COSMIC_ERROR);
   assert(cosmic_json_get_error_code(j) == COSMIC_MAX_DEPTH_ERROR);
@@ -67,7 +67,7 @@ void test_depth_read() {
 
 void test_invalid_read_prim() {
   char *buf = "{\"key\": nulS}";
-  cosmic_json_t *j = cosmic_json_read_buffer(buf, strlen(buf));
+  cosmic_json_t *j = cosmic_json_read_buffer(buf, strlen(buf), 10);
   const cosmic_json_error_t *err = NULL;
 
   assert(cosmic_json_get_type(j) == COSMIC_ERROR);
@@ -84,7 +84,7 @@ void test_invalid_read_prim() {
 
 void test_special_char() {
   char *buf = "{\"key\\n\": \"value\\ra\"}";
-  cosmic_json_t *j = cosmic_json_read_buffer(buf, strlen(buf));
+  cosmic_json_t *j = cosmic_json_read_buffer(buf, strlen(buf), 10);
   const cosmic_json_t *child = NULL;
 
   assert(cosmic_json_get_error_code(j) == COSMIC_NONE);

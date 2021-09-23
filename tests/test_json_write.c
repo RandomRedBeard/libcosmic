@@ -34,7 +34,7 @@ int main() {
   cosmic_json_add(l, cosmic_json_copy(j));
 
   io = cosmic_io_mem_new(buf, 1024);
-  cosmic_json_write_stream(j, io, NULL);
+  cosmic_json_write_stream(j, io, NULL, "%.2f");
 
   assert(strcmp(buf, expected_string) == 0);
 

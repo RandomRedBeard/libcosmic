@@ -16,15 +16,6 @@
 extern "C" {
 #endif
 
-/* Max object depth for read/write */
-#ifndef COSMIC_MAX_DEPTH
-#define COSMIC_MAX_DEPTH 10
-#endif
-
-#ifndef COSMIC_NUMBER_WRITE_PRECISION
-#define COSMIC_NUMBER_WRITE_PRECISION "%.4f"
-#endif
-
 #define COSMIC_NUMBER_BUFFER_LEN 32
 #define COSMIC_STRING_MAX_LEN 1024
 #define COSMIC_JSON_WHITESPACE " \n\t\r"
@@ -168,20 +159,21 @@ COSMIC_DLL cosmic_iterator_t *cosmic_json_iterator(const cosmic_json_t *);
  */
 
 COSMIC_DLL ssize_t cosmic_json_write_stream(const cosmic_json_t *,
-                                            cosmic_io_t *, const char *);
+                                            cosmic_io_t *, const char *,
+                                            const char *);
 
 /**
  * write_stream(io_mem_new(buf, len));
  */
 COSMIC_DLL ssize_t cosmic_json_write_buffer(const cosmic_json_t *, char *,
-                                            size_t, const char *);
+                                            size_t, const char *, const char *);
 
-COSMIC_DLL cosmic_json_t *cosmic_json_read_stream(cosmic_io_t *io);
+COSMIC_DLL cosmic_json_t *cosmic_json_read_stream(cosmic_io_t *io, size_t);
 
 /**
  * read_stream(io_mem_new(buf, len))
  */
-COSMIC_DLL cosmic_json_t *cosmic_json_read_buffer(char *buf, size_t);
+COSMIC_DLL cosmic_json_t *cosmic_json_read_buffer(char *buf, size_t, size_t);
 
 #ifdef USING_NAMESPACE_COSMIC
 typedef cosmic_json_t json_t;
