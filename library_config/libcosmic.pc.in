@@ -5,5 +5,5 @@ Name: libcosmic
 Version:
 Description:
 URL:
-Libs: -L${libdir} -lccosmic
+Libs: -L${libdir} -lcosmic
 Cflags: -I${includedir}
