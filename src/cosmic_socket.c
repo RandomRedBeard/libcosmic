@@ -251,11 +251,12 @@ cosmic_socket_t *cosmic_socket_accept(cosmic_socket_t *s) {
 #else
   int fd = accept(s->io.fd, NULL, NULL);
 #endif
+  cosmic_socket_t *cl = NULL;
   if (fd < 0) {
     return NULL;
   }
 
-  cosmic_socket_t *cl = calloc(1, sizeof(cosmic_socket_t));
+  cl = calloc(1, sizeof(cosmic_socket_t));
   cl->io.fd = fd;
   cl->io.rpwait = s->io.wpwait = -1;
   cl->io.vtbl = &COSMIC_IO_SOCKET_VTBL;

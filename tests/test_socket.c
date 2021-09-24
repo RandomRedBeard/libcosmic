@@ -10,7 +10,11 @@ void test_connect() {
   cosmic_socket_t *s = cosmic_socket_new();
   cosmic_socket_set_nonblock(s, 1);
   if (cosmic_socket_connect_to_host(s, "google.com", "http") < 0) {
+#ifdef _WIN32
+    if (WSAGetLastError() != WSAEWOULDBLOCK) {
+#else
     if (errno != EINPROGRESS) {
+#endif
       perror("Failed to connect");
       exit(1);
     }
@@ -27,7 +31,7 @@ void test_connect() {
 
   while ((i = cosmic_socket_read(s, buf, 1023)) > 0) {
     *(buf + i) = 0;
-    printf("%zd\n", i);
+    printf("%ld\n", (long)i);
   }
 
   cosmic_socket_free(s);
@@ -63,6 +67,9 @@ void test_socket_pair() {
   client = cosmic_socket_new();
   if (cosmic_socket_connect(client, (struct sockaddr *)&addr, addrlen) < 0) {
     perror("Failed to connect");
+#ifdef _WIN32
+    printf("WSA Error %d\n", WSAGetLastError());
+#endif
     exit(1);
   }
 
@@ -74,19 +81,21 @@ void test_socket_pair() {
 
   /* Close master */
   i = cosmic_socket_close(master);
-  printf("Close %zd\n", i);
+  printf("Close %ld\n", (long)i);
 
   sio = cosmic_socket_get_io(server);
   cio = cosmic_socket_get_io(client);
 
   i = cosmic_io_write(sio, "test", 4);
   assert(i > 0);
-  printf("Wrote %zd\n", i);
+  printf("Wrote %ld\n", (long)i);
 
   i = cosmic_io_read(cio, buf, 1023);
   assert(i > 0);
   *(buf + i) = 0;
-  printf("Recieved %zd - %s\n", i, buf);
+  printf("Recieved %ld - %s\n", (long)i, buf);
+
+  assert(strcmp(buf, "test") == 0);
 
   cosmic_socket_free(client);
   cosmic_socket_free(server);
@@ -103,6 +112,9 @@ void test_bind() {
 
   assert(cosmic_socket_bind_to_host(m2, "localhost", "8080") < 0);
   perror("Failed to bind");
+#ifdef _WIN32
+  printf("WSA Error %d\n", WSAGetLastError());
+#endif
 
   cosmic_socket_close(m1);
 

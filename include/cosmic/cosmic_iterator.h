@@ -16,14 +16,7 @@ COSMIC_DLL int cosmic_iterator_has_next(const cosmic_iterator_t *);
 COSMIC_DLL void cosmic_iterator_close(cosmic_iterator_t *);
 
 #ifdef USING_NAMESPACE_COSMIC
-
 typedef cosmic_iterator_t iterator_t;
-
-#define iterator_next cosmic_iterator_next
-#define iterator_next_pair cosmic_iterator_next_pair
-#define iterator_has_next cosmic_iterator_has_next
-#define iterator_close cosmic_iterator_close
-
 #endif
 
 #ifdef __cplusplus

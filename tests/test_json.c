@@ -1,3 +1,4 @@
+#include "internal/cosmic_json.h"
 #include "test_base.h"
 #include <cosmic/cosmic_json.h>
 #include <stdio.h>
@@ -166,8 +167,8 @@ void test_raw_types() {
 }
 
 void test_list_insert() {
-  const cosmic_json_t* s = NULL;
-  cosmic_json_t* l = cosmic_json_new_list();
+  const cosmic_json_t *s = NULL;
+  cosmic_json_t *l = cosmic_json_new_list();
 
   cosmic_json_add(l, cosmic_json_new_string("ok"));
   cosmic_json_add(l, cosmic_json_new_string("ok"));
