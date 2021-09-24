@@ -24,6 +24,7 @@ extern "C" {
 
 #define COSMIC_NUMBER_BUFFER_LEN 32
 #define COSMIC_DEFAULT_STRING_MAX_LEN 1024
+#define COSMIC_DEFAULT_FPREC "%.4f"
 #define COSMIC_JSON_WHITESPACE " \n\t\r"
 
 typedef struct cosmic_json cosmic_json_t;
@@ -164,15 +165,20 @@ COSMIC_DLL cosmic_iterator_t *cosmic_json_iterator(const cosmic_json_t *);
  * Parsing and Writing functions
  */
 
-COSMIC_DLL ssize_t cosmic_json_write_stream(const cosmic_json_t *,
-                                            cosmic_io_t *, const char *,
-                                            const char *);
+#define cosmic_json_write_stream(j, io, indent)                                \
+  cosmic_json_write_stream_s(j, io, indent, COSMIC_DEFAULT_FPREC)
+COSMIC_DLL ssize_t cosmic_json_write_stream_s(const cosmic_json_t *,
+                                              cosmic_io_t *, const char *,
+                                              const char *);
 
 /**
  * write_stream(io_mem_new(buf, len));
  */
-COSMIC_DLL ssize_t cosmic_json_write_buffer(const cosmic_json_t *, char *,
-                                            size_t, const char *, const char *);
+#define cosmic_json_write_buffer(j, buf, len, indent)                          \
+  cosmic_json_write_buffer_s(j, buf, len, indent, COSMIC_DEFAULT_FPREC)
+COSMIC_DLL ssize_t cosmic_json_write_buffer_s(const cosmic_json_t *, char *,
+                                              size_t, const char *,
+                                              const char *);
 
 #define cosmic_json_read_stream(io, max_depth)                                 \
   cosmic_json_read_stream_s(io, max_depth, COSMIC_DEFAULT_STRING_MAX_LEN)
