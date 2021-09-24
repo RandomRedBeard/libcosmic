@@ -3,7 +3,7 @@
 
 struct cosmic_json_read_st {
   cosmic_io_t *io;
-  size_t depth, max_depth; /* Function depth */
+  size_t depth, max_depth, sbuflen; /* Function depth */
   cosmic_json_error_t *error;
 };
 
@@ -240,8 +240,8 @@ ssize_t cosmic_json_read_number(struct cosmic_json_read_st rw,
  */
 ssize_t cosmic_json_read_json_string(struct cosmic_json_read_st rw,
                                      cosmic_json_t **j) {
-  char buf[COSMIC_STRING_MAX_LEN + 1];
-  ssize_t i = cosmic_json_read_string(rw, buf, COSMIC_STRING_MAX_LEN);
+  char *buf = alloca(rw.sbuflen + 1);
+  ssize_t i = cosmic_json_read_string(rw, buf, rw.sbuflen);
   if (i < 0) {
     return -1;
   }
@@ -281,7 +281,8 @@ ssize_t cosmic_json_read_object(struct cosmic_json_read_st rw,
                                 cosmic_json_t **obj) {
   ssize_t j = 0;
   size_t i = 0;
-  char kbuf[COSMIC_STRING_MAX_LEN + 1], buf, overflow;
+  char *kbuf = alloca(rw.sbuflen + 1);
+  char buf, overflow;
   cosmic_json_t *tmp_j = NULL, *tmp_value = NULL;
 
   if (cosmic_json_rw_new_func(&rw)) {
@@ -306,7 +307,7 @@ ssize_t cosmic_json_read_object(struct cosmic_json_read_st rw,
     }
 
     /* Read key string */
-    j = cosmic_json_read_string(rw, kbuf, COSMIC_STRING_MAX_LEN);
+    j = cosmic_json_read_string(rw, kbuf, rw.sbuflen);
     if (j < 0) {
       break;
     }
@@ -473,7 +474,8 @@ ssize_t cosmic_json_read_value(struct cosmic_json_read_st rw, cosmic_json_t **j,
   return -1;
 }
 
-cosmic_json_t *cosmic_json_read_stream(cosmic_io_t *io, size_t max_depth) {
+cosmic_json_t *cosmic_json_read_stream_s(cosmic_io_t *io, size_t max_depth,
+                                         size_t sbuflen) {
   ssize_t j;
   char buf, overflow = 0;
   cosmic_json_t *json = NULL;
@@ -488,6 +490,7 @@ cosmic_json_t *cosmic_json_read_stream(cosmic_io_t *io, size_t max_depth) {
   rw.io = io;
   rw.depth = 0;
   rw.max_depth = max_depth;
+  rw.sbuflen = sbuflen;
 
   j = cosmic_json_seek_until(rw, &buf, "\"{[tfn", 1);
   if (j < 0) {
@@ -502,9 +505,10 @@ cosmic_json_t *cosmic_json_read_stream(cosmic_io_t *io, size_t max_depth) {
   return json;
 }
 
-cosmic_json_t *cosmic_json_read_buffer(char *buf, size_t len, size_t max_depth) {
+cosmic_json_t *cosmic_json_read_buffer_s(char *buf, size_t len,
+                                         size_t max_depth, size_t sbuflen) {
   cosmic_io_t *io = cosmic_io_mem_new(buf, len);
-  cosmic_json_t *j = cosmic_json_read_stream(io, max_depth);
+  cosmic_json_t *j = cosmic_json_read_stream_s(io, max_depth, sbuflen);
   cosmic_io_mem_free(io);
   return j;
 }

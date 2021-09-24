@@ -5,6 +5,10 @@
 #include <string.h>
 
 #ifdef _WIN32
+#include <io.h>
+#define read(fd, buf, len) _read(fd, buf, (unsigned int)len)
+#define write(fd, buf, len) _write(fd, buf, (unsigned int)len)
+#define close(fd) _close(fd)
 #else
 #include <unistd.h>
 #endif

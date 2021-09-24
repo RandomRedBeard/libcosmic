@@ -92,7 +92,6 @@ void test_special_char() {
   assert(child);
   assert(strcmp(cosmic_json_get_string(child), "value\ra") == 0);
   puts(cosmic_json_get_string(child));
-  printf("%lu\n", strlen(cosmic_json_get_string(child)));
   cosmic_json_free(j);
 }
 
