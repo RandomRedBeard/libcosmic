@@ -94,6 +94,16 @@ ssize_t cosmic_json_write_string(const char *cp, cosmic_io_t *io) {
       i += j;
     }
 
+    if (*cp == '\n') {
+      if ((j = cosmic_io_write(io, "\\n", 2)) <= 0) {
+        return -1;
+      }
+
+      i += j;
+      cp++;
+      continue;
+    }
+
     if ((j = cosmic_io_write(io, cp++, 1)) <= 0) {
       return -1;
     }
@@ -305,7 +315,7 @@ ssize_t cosmic_json_write_value(const cosmic_json_t *j,
 }
 
 ssize_t cosmic_json_write_stream_s(const cosmic_json_t *j, cosmic_io_t *io,
-                                 const char *indent, const char *fprec) {
+                                   const char *indent, const char *fprec) {
   struct cosmic_json_write_st wr;
   wr.io = io;
   wr.indent = indent;
@@ -314,8 +324,9 @@ ssize_t cosmic_json_write_stream_s(const cosmic_json_t *j, cosmic_io_t *io,
   return cosmic_json_write_value(j, wr);
 }
 
-ssize_t cosmic_json_write_buffer_s(const cosmic_json_t *j, char *buf, size_t len,
-                                 const char *indent, const char *fprec) {
+ssize_t cosmic_json_write_buffer_s(const cosmic_json_t *j, char *buf,
+                                   size_t len, const char *indent,
+                                   const char *fprec) {
   cosmic_io_t *io = cosmic_io_mem_new(buf, len);
   ssize_t i = cosmic_json_write_stream_s(j, io, indent, fprec);
   cosmic_io_mem_free(io);
