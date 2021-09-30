@@ -262,11 +262,11 @@ cosmic_json_t *cosmic_json_new_bool(long l) {
 
 cosmic_json_t *cosmic_json_new_object() {
   return cosmic_json_new(COSMIC_OBJECT,
-                         COSMIC_ANY(cosmic_map_new((cosmic_cmp)strcmp)));
+                         COSMIC_ANY(cosmic_dmap_new((cosmic_cmp)strcmp)));
 }
 
 cosmic_json_t *cosmic_json_new_list() {
-  return cosmic_json_new(COSMIC_LIST, COSMIC_ANY(cosmic_list_new()));
+  return cosmic_json_new(COSMIC_LIST, COSMIC_ANY(cosmic_llist_new()));
 }
 
 cosmic_json_t *cosmic_json_copy_null() { return cosmic_json_new_null(); }
@@ -340,10 +340,10 @@ void cosmic_json_list_dealloc(cosmic_any_t o) { cosmic_json_free(o.vp); }
 void cosmic_json_free(cosmic_json_t *j) {
   switch (j->type) {
   case COSMIC_OBJECT:
-    cosmic_map_free(j->o.vp, cosmic_json_map_dealloc);
+    cosmic_dmap_free(j->o.vp, cosmic_json_map_dealloc);
     break;
   case COSMIC_LIST:
-    cosmic_list_free(j->o.vp, cosmic_json_list_dealloc);
+    cosmic_llist_free(j->o.vp, cosmic_json_list_dealloc);
     break;
   case COSMIC_STRING:
     free(j->o.vp);

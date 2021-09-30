@@ -15,8 +15,8 @@
 #include <cosmic/cosmic_io.h>
 #include <cosmic/cosmic_io_mem.h>
 #include <cosmic/cosmic_lib.h>
-#include <cosmic/cosmic_list.h>
-#include <cosmic/cosmic_map.h>
+#include <cosmic/cosmic_llist.h>
+#include <cosmic/cosmic_dmap.h>
 
 #ifdef __cplusplus
 extern "C" {
