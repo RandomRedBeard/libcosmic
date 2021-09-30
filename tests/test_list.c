@@ -1,5 +1,5 @@
 #include "test_base.h"
-#include <cosmic/cosmic_list.h>
+#include <cosmic/cosmic_llist.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -33,7 +33,7 @@ void pop_and_check(cosmic_list_t *l, const char *c) {
 }
 
 void test_get() {
-  cosmic_list_t *l = cosmic_list_new();
+  cosmic_list_t *l = cosmic_llist_new();
   cosmic_list_add(l, cany_str("thomas"));
   cosmic_list_add(l, cany_str("thomas1"));
 
@@ -41,11 +41,11 @@ void test_get() {
 
   get_and_check(l, 1, "thomas1");
 
-  cosmic_list_free(l, cany_free);
+  cosmic_llist_free(l, cany_free);
 }
 
 void test_insert() {
-  cosmic_list_t *l = cosmic_list_new();
+  cosmic_list_t *l = cosmic_llist_new();
   cosmic_list_insert(l, 0, cany_str("thomas"));
 
   assert(cosmic_list_size(l) == 1);
@@ -61,11 +61,11 @@ void test_insert() {
 
   assert(cosmic_list_insert(l, 10, COSMIC_ANY("NO_ALLOC")) == -1);
 
-  cosmic_list_free(l, cany_free);
+  cosmic_llist_free(l, cany_free);
 }
 
 void test_remove() {
-  cosmic_list_t *l = cosmic_list_new();
+  cosmic_list_t *l = cosmic_llist_new();
 
   cosmic_list_add(l, cany_str("time1"));
   cosmic_list_add(l, cany_str("time2"));
@@ -81,11 +81,11 @@ void test_remove() {
 
   assert(cosmic_list_remove(l, 12, NULL) == -1);
 
-  cosmic_list_free(l, cany_free);
+  cosmic_llist_free(l, cany_free);
 }
 
 void test_pop() {
-  cosmic_list_t *l = cosmic_list_new();
+  cosmic_list_t *l = cosmic_llist_new();
 
   cosmic_list_add(l, cany_str("time1"));
   cosmic_list_add(l, cany_str("time2"));
@@ -95,17 +95,17 @@ void test_pop() {
   pop_and_check(l, "time1");
   pop_and_check(l, "time2");
 
-  cosmic_list_free(l, cany_free);
+  cosmic_llist_free(l, cany_free);
 
-  l = cosmic_list_new();
+  l = cosmic_llist_new();
   assert(cosmic_list_pop(l, NULL) == -1);
 
-  cosmic_list_free(l, NULL);
+  cosmic_llist_free(l, NULL);
 }
 
 void test_iterator() {
   cosmic_any_t o;
-  cosmic_list_t *l = cosmic_list_new();
+  cosmic_list_t *l = cosmic_llist_new();
   cosmic_iterator_t *it = NULL;
 
   cosmic_list_add(l, cany_str("time1"));
@@ -122,7 +122,7 @@ void test_iterator() {
 
   cosmic_iterator_close(it);
 
-  cosmic_list_free(l, cany_free);
+  cosmic_llist_free(l, cany_free);
 }
 
 int main() {

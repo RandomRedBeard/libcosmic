@@ -22,19 +22,19 @@ include_directories(include)
 file(GLOB COSMIC_SOURCE src/*.c)
 file(GLOB COSMIC_PUBLIC_HEADERS include/cosmic/*.h)
 
-if (NOT COSMIC_SHARED AND NOT COSMIC_STATIC)
+if (SKIP_COSMIC_SHARED AND SKIP_COSMIC_STATIC)
     message(FATAL_ERROR "Nothing to build")
 endif()
 
 set(cosmic_targets)
 
-if (COSMIC_SHARED)
+if (NOT SKIP_COSMIC_SHARED)
     add_library(cosmic SHARED ${COSMIC_SOURCE})
     target_compile_definitions(cosmic PUBLIC COSMIC_DLL_EXPORT)
     set(cosmic_targets cosmic)
 endif()
 
-if (COSMIC_STATIC)
+if (NOT SKIP_COSMIC_STATIC)
     add_library(cosmic-static STATIC ${COSMIC_SOURCE})
     target_compile_definitions(cosmic-static PUBLIC COSMIC_STATIC)
     set(cosmic_targets ${cosmic_targets} cosmic-static)
@@ -42,7 +42,7 @@ endif()
 
 # Which lib to link against (default to shared)
 set(COSMIC_LIBRARY cosmic)
-if (NOT COSMIC_SHARED)
+if (SKIP_COSMIC_SHARED)
     set(COSMIC_LIBRARY cosmic-static)
 endif()
 

@@ -1,5 +1,5 @@
 #include "test_base.h"
-#include <cosmic/cosmic_map.h>
+#include <cosmic/cosmic_dmap.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -9,7 +9,7 @@ cosmic_any_t cany_str(const char *c) { return COSMIC_ANY(strdup(c)); }
 
 void cany_free(cosmic_any_t o) { free(o.vp); }
 
-void cany_map_free(cosmic_pair_t p) {
+void cany_dmap_free(cosmic_pair_t p) {
   cany_free(p.k);
   cany_free(p.v);
 }
@@ -21,7 +21,7 @@ void check_str(cosmic_any_t o, const char *c) {
 }
 
 void test_size() {
-  cosmic_map_t *m = cosmic_map_new(mycmp);
+  cosmic_map_t *m = cosmic_dmap_new(mycmp);
 
   cosmic_map_add(m, cany_str("key"), cany_str("value"));
   cosmic_map_add(m, cany_str("key1"), cany_str("value1"));
@@ -30,12 +30,12 @@ void test_size() {
 
   assert(cosmic_map_add(m, COSMIC_ANY("key"), COSMIC_ANY("fail")) == -1);
 
-  cosmic_map_free(m, cany_map_free);
+  cosmic_dmap_free(m, cany_dmap_free);
 }
 
 void test_get() {
   cosmic_any_t o;
-  cosmic_map_t *m = cosmic_map_new(mycmp);
+  cosmic_map_t *m = cosmic_dmap_new(mycmp);
 
   cosmic_map_add(m, cany_str("key"), cany_str("value"));
   cosmic_map_add(m, cany_str("key1"), cany_str("value1"));
@@ -51,12 +51,12 @@ void test_get() {
 
   check_str(o, "value2");
 
-  cosmic_map_free(m, cany_map_free);
+  cosmic_dmap_free(m, cany_dmap_free);
 }
 
 void test_remove() {
   cosmic_pair_t p;
-  cosmic_map_t *m = cosmic_map_new(mycmp);
+  cosmic_map_t *m = cosmic_dmap_new(mycmp);
 
   cosmic_map_add(m, cany_str("key"), cany_str("value"));
   cosmic_map_add(m, cany_str("key1"), cany_str("value1"));
@@ -70,14 +70,14 @@ void test_remove() {
   check_str(p.k, "key5");
   check_str(p.v, "value5");
 
-  cany_map_free(p);
+  cany_dmap_free(p);
 
   assert(cosmic_map_remove(m, COSMIC_ANY_CONST("key"), &p) == 0);
 
   check_str(p.k, "key");
   check_str(p.v, "value");
 
-  cany_map_free(p);
+  cany_dmap_free(p);
 
   assert(cosmic_map_remove(m, COSMIC_ANY_CONST("not_key"), NULL) == -1);
 
@@ -86,7 +86,7 @@ void test_remove() {
   check_str(p.k, "key2");
   check_str(p.v, "value2");
 
-  cany_map_free(p);
+  cany_dmap_free(p);
 
   cosmic_map_add(m, cany_str("key6"), cany_str("value6"));
   cosmic_map_add(m, cany_str("key7"), cany_str("value7"));
@@ -98,14 +98,14 @@ void test_remove() {
   check_str(p.k, "key3");
   check_str(p.v, "value3");
 
-  cany_map_free(p);
+  cany_dmap_free(p);
 
-  cosmic_map_free(m, cany_map_free);
+  cosmic_dmap_free(m, cany_dmap_free);
 }
 
 void test_iterator() {
   cosmic_any_t o;
-  cosmic_map_t *m = cosmic_map_new(mycmp);
+  cosmic_map_t *m = cosmic_dmap_new(mycmp);
   cosmic_pair_t *pp = calloc(1, sizeof(cosmic_pair_t));
   cosmic_iterator_t *it = NULL;
 
@@ -132,7 +132,7 @@ void test_iterator() {
 
   cosmic_iterator_close(it);
 
-  cosmic_map_free(m, cany_map_free);
+  cosmic_dmap_free(m, cany_dmap_free);
   free(pp);
 }
 
