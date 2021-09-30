@@ -42,61 +42,49 @@ extern "C" {
 /* Global init of sockets (Thanks Windows) */
 COSMIC_DLL int cosmic_socket_init();
 
-typedef struct cosmic_socket cosmic_socket_t;
-
-COSMIC_DLL cosmic_socket_t *cosmic_socket_new();
-COSMIC_DLL void cosmic_socket_free(cosmic_socket_t *);
+COSMIC_DLL cosmic_io_t *cosmic_socket_new();
+COSMIC_DLL void cosmic_socket_free(cosmic_io_t *);
 
 /**
  * Connectors
  */
 
-COSMIC_DLL int cosmic_socket_connect(cosmic_socket_t *, const struct sockaddr *,
+COSMIC_DLL int cosmic_socket_connect(cosmic_io_t *, const struct sockaddr *,
                                      socklen_t);
-COSMIC_DLL int cosmic_socket_connect_to_host(cosmic_socket_t *, const char *,
+COSMIC_DLL int cosmic_socket_connect_to_host(cosmic_io_t *, const char *,
                                              const char *);
-COSMIC_DLL int cosmic_socket_bind(cosmic_socket_t *, const struct sockaddr *,
+COSMIC_DLL int cosmic_socket_bind(cosmic_io_t *, const struct sockaddr *,
                                   socklen_t);
-COSMIC_DLL int cosmic_socket_bind_to_host(cosmic_socket_t *, const char *,
+COSMIC_DLL int cosmic_socket_bind_to_host(cosmic_io_t *, const char *,
                                           const char *);
-COSMIC_DLL int cosmic_socket_listen(cosmic_socket_t *, int);
-COSMIC_DLL cosmic_socket_t *cosmic_socket_accept(cosmic_socket_t *);
-
-/**
- * IO Functions
- */
-
-COSMIC_DLL ssize_t cosmic_socket_read(cosmic_socket_t *, char *, size_t);
-COSMIC_DLL ssize_t cosmic_socket_write(cosmic_socket_t *, const char *, size_t);
-COSMIC_DLL int cosmic_socket_close(cosmic_socket_t *);
+COSMIC_DLL int cosmic_socket_listen(cosmic_io_t *, int);
+COSMIC_DLL cosmic_io_t *cosmic_socket_accept(cosmic_io_t *);
 
 /**
  * Socket specific functions
  */
 
-COSMIC_DLL int cosmic_socket_rpoll(cosmic_socket_t *);
-COSMIC_DLL int cosmic_socket_wpoll(cosmic_socket_t *);
-COSMIC_DLL int cosmic_socket_shutdown(cosmic_socket_t *, int);
+COSMIC_DLL int cosmic_socket_rpoll(cosmic_io_t *);
+COSMIC_DLL int cosmic_socket_wpoll(cosmic_io_t *);
+COSMIC_DLL int cosmic_socket_shutdown(cosmic_io_t *, int);
 
 /**
  * Set underlying io features
  */
 
-COSMIC_DLL int cosmic_socket_set_nonblock(cosmic_socket_t *, int);
-COSMIC_DLL void cosmic_socket_set_rpwait(cosmic_socket_t *, int);
-COSMIC_DLL void cosmic_socket_set_wpwait(cosmic_socket_t *, int);
+COSMIC_DLL int cosmic_socket_set_nonblock(cosmic_io_t *, int);
+COSMIC_DLL void cosmic_socket_set_rpwait(cosmic_io_t *, int);
+COSMIC_DLL void cosmic_socket_set_wpwait(cosmic_io_t *, int);
 
-/* Return underlying io */
-COSMIC_DLL cosmic_io_t *cosmic_socket_get_io(cosmic_socket_t *);
 /* Return underlying handle */
 #ifdef _WIN32
-COSMIC_DLL SOCKET cosmic_socket_get_fd(cosmic_socket_t *);
+COSMIC_DLL SOCKET cosmic_socket_get_fd(cosmic_io_t *);
 #else
-COSMIC_DLL int cosmic_socket_get_fd(cosmic_socket_t *);
+COSMIC_DLL int cosmic_socket_get_fd(cosmic_io_t *);
 #endif
 
 #ifdef USING_NAMESPACE_COSMIC
-typedef cosmic_socket_t csocket_t;
+typedef cosmic_io_t csocket_t;
 #endif
 
 #ifdef __cplusplus

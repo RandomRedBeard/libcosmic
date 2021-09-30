@@ -21,13 +21,9 @@ struct cosmic_io {
   int rpwait, wpwait;
 };
 
-struct cosmic_socket {
-  cosmic_io_t io;
-};
-
 /* Forward declaration of io functions */
 
-int cosmic_socket_io_rpoll(cosmic_io_t *io) {
+int cosmic_socket_rpoll(cosmic_io_t *io) {
   struct pollfd pfd;
   int n, pollerr = POLLNVAL | POLLERR;
 
@@ -52,7 +48,7 @@ int cosmic_socket_io_rpoll(cosmic_io_t *io) {
   return n;
 }
 
-int cosmic_socket_io_wpoll(cosmic_io_t *io) {
+int cosmic_socket_wpoll(cosmic_io_t *io) {
   struct pollfd pfd;
   int n, pollerr = POLLHUP | POLLNVAL | POLLERR;
 
@@ -72,12 +68,12 @@ int cosmic_socket_io_wpoll(cosmic_io_t *io) {
   return n;
 }
 
-int cosmic_socket_io_shutdown(cosmic_io_t *io, int how) {
+int cosmic_socket_shutdown(cosmic_io_t *io, int how) {
   return shutdown(io->fd, how);
 }
 
 ssize_t cosmic_socket_io_read(cosmic_io_t *io, char *buf, size_t len) {
-  int r = cosmic_socket_io_rpoll(io);
+  int r = cosmic_socket_rpoll(io);
   if (r <= 0) {
     return r;
   }
@@ -97,7 +93,7 @@ ssize_t cosmic_socket_io_write(cosmic_io_t *io, const char *buf, size_t len) {
 #endif
   size_t nbytes = 0;
   while (nbytes < len) {
-    n = cosmic_socket_io_wpoll(io);
+    n = cosmic_socket_wpoll(io);
     if (n <= 0) {
       return n;
     }
@@ -141,17 +137,17 @@ int cosmic_socket_io_close(cosmic_io_t *io) {
 struct cosmic_io_vtable COSMIC_IO_SOCKET_VTBL = {
     cosmic_socket_io_read, cosmic_socket_io_write, cosmic_socket_io_close};
 
-cosmic_socket_t *cosmic_socket_new() {
-  cosmic_socket_t *s = calloc(1, sizeof(cosmic_socket_t));
-  s->io.fd = socket(AF_INET, SOCK_STREAM, 0);
-  s->io.rpwait = s->io.wpwait = -1;
-  s->io.vtbl = &COSMIC_IO_SOCKET_VTBL;
+cosmic_io_t *cosmic_socket_new() {
+  cosmic_io_t *s = calloc(1, sizeof(cosmic_io_t));
+  s->fd = socket(AF_INET, SOCK_STREAM, 0);
+  s->rpwait = s->wpwait = -1;
+  s->vtbl = &COSMIC_IO_SOCKET_VTBL;
 
   return s;
 }
 
-void cosmic_socket_free(cosmic_socket_t *s) {
-  cosmic_socket_close(s);
+void cosmic_socket_free(cosmic_io_t *s) {
+  cosmic_socket_io_close(s);
   free(s);
 }
 
@@ -159,16 +155,16 @@ void cosmic_socket_free(cosmic_socket_t *s) {
  * Connectors
  */
 
-int cosmic_socket_connect(cosmic_socket_t *s, const struct sockaddr *addr,
+int cosmic_socket_connect(cosmic_io_t *s, const struct sockaddr *addr,
                           socklen_t addrlen) {
 #ifdef _WIN32
-  return connect(s->io.fd, addr, (int)addrlen);
+  return connect(s->fd, addr, (int)addrlen);
 #else
-  return connect(s->io.fd, addr, addrlen);
+  return connect(s->fd, addr, addrlen);
 #endif
 }
 
-int cosmic_socket_connect_to_host(cosmic_socket_t *s, const char *node,
+int cosmic_socket_connect_to_host(cosmic_io_t *s, const char *node,
                                   const char *service) {
   struct addrinfo hints, *addr = NULL, *iter = NULL;
   int i = 0;
@@ -185,9 +181,9 @@ int cosmic_socket_connect_to_host(cosmic_socket_t *s, const char *node,
 
   while (iter) {
 #ifdef _WIN32
-    if ((i = connect(s->io.fd, iter->ai_addr, (int)iter->ai_addrlen)) < 0) {
+    if ((i = connect(s->fd, iter->ai_addr, (int)iter->ai_addrlen)) < 0) {
 #else
-    if ((i = connect(s->io.fd, iter->ai_addr, iter->ai_addrlen)) < 0) {
+    if ((i = connect(s->fd, iter->ai_addr, iter->ai_addrlen)) < 0) {
 #endif
       iter = iter->ai_next;
       continue;
@@ -200,16 +196,16 @@ int cosmic_socket_connect_to_host(cosmic_socket_t *s, const char *node,
   return i;
 }
 
-int cosmic_socket_bind(cosmic_socket_t *s, const struct sockaddr *addr,
+int cosmic_socket_bind(cosmic_io_t *s, const struct sockaddr *addr,
                        socklen_t addrlen) {
 #ifdef _WIN32
-  return bind(s->io.fd, addr, (int)addrlen);
+  return bind(s->fd, addr, (int)addrlen);
 #else
-  return bind(s->io.fd, addr, addrlen);
+  return bind(s->fd, addr, addrlen);
 #endif
 }
 
-int cosmic_socket_bind_to_host(cosmic_socket_t *s, const char *node,
+int cosmic_socket_bind_to_host(cosmic_io_t *s, const char *node,
                                const char *service) {
   struct addrinfo hints, *addr = NULL, *iter = NULL;
   int i = 0;
@@ -226,9 +222,9 @@ int cosmic_socket_bind_to_host(cosmic_socket_t *s, const char *node,
 
   while (iter) {
 #ifdef _WIN32
-    if ((i = bind(s->io.fd, iter->ai_addr, (int)iter->ai_addrlen)) < 0) {
+    if ((i = bind(s->fd, iter->ai_addr, (int)iter->ai_addrlen)) < 0) {
 #else
-    if ((i = bind(s->io.fd, iter->ai_addr, iter->ai_addrlen)) < 0) {
+    if ((i = bind(s->fd, iter->ai_addr, iter->ai_addrlen)) < 0) {
 #endif
       iter = iter->ai_next;
       continue;
@@ -241,67 +237,35 @@ int cosmic_socket_bind_to_host(cosmic_socket_t *s, const char *node,
   return i;
 }
 
-int cosmic_socket_listen(cosmic_socket_t *s, int backlog) {
-  return listen(s->io.fd, backlog);
+int cosmic_socket_listen(cosmic_io_t *s, int backlog) {
+  return listen(s->fd, backlog);
 }
 
-cosmic_socket_t *cosmic_socket_accept(cosmic_socket_t *s) {
+cosmic_io_t *cosmic_socket_accept(cosmic_io_t *s) {
 #ifdef _WIN32
-  SOCKET fd = accept(s->io.fd, NULL, NULL);
+  SOCKET fd = accept(s->fd, NULL, NULL);
 #else
-  int fd = accept(s->io.fd, NULL, NULL);
+  int fd = accept(s->fd, NULL, NULL);
 #endif
-  cosmic_socket_t *cl = NULL;
+  cosmic_io_t *cl = NULL;
   if (fd < 0) {
     return NULL;
   }
 
-  cl = calloc(1, sizeof(cosmic_socket_t));
-  cl->io.fd = fd;
-  cl->io.rpwait = s->io.wpwait = -1;
-  cl->io.vtbl = &COSMIC_IO_SOCKET_VTBL;
+  cl = calloc(1, sizeof(cosmic_io_t));
+  cl->fd = fd;
+  cl->rpwait = s->wpwait = -1;
+  cl->vtbl = &COSMIC_IO_SOCKET_VTBL;
 
   return cl;
 }
 
-/**
- * IO Function socket wrappers
- */
-
-ssize_t cosmic_socket_read(cosmic_socket_t *s, char *buf, size_t len) {
-  return cosmic_socket_io_read(&s->io, buf, len);
-}
-
-ssize_t cosmic_socket_write(cosmic_socket_t *s, const char *buf, size_t len) {
-  return cosmic_socket_io_write(&s->io, buf, len);
-}
-
-int cosmic_socket_close(cosmic_socket_t *s) {
-  return cosmic_socket_io_close(&s->io);
-}
-
-/**
- * Socket specific functions
- */
-
-int cosmic_socket_rpoll(cosmic_socket_t *s) {
-  return cosmic_socket_io_rpoll(&s->io);
-}
-
-int cosmic_socket_wpoll(cosmic_socket_t *s) {
-  return cosmic_socket_io_wpoll(&s->io);
-}
-
-int cosmic_socket_shutdown(cosmic_socket_t *s, int how) {
-  return cosmic_socket_io_shutdown(&s->io, how);
-}
-
-int cosmic_socket_set_nonblock(cosmic_socket_t *s, int nonblock) {
+int cosmic_socket_set_nonblock(cosmic_io_t *s, int nonblock) {
 #ifdef _WIN32
   u_long i = nonblock;
-  return ioctlsocket(s->io.fd, FIONBIO, &i);
+  return ioctlsocket(s->fd, FIONBIO, &i);
 #else
-  int flags = fcntl(s->io.fd, F_GETFL, 0);
+  int flags = fcntl(s->fd, F_GETFL, 0);
   if (flags < 0) {
     return flags;
   }
@@ -312,22 +276,20 @@ int cosmic_socket_set_nonblock(cosmic_socket_t *s, int nonblock) {
     flags &= ~O_NONBLOCK;
   }
 
-  return fcntl(s->io.fd, F_SETFL, flags);
+  return fcntl(s->fd, F_SETFL, flags);
 #endif
 }
 
-void cosmic_socket_set_rpwait(cosmic_socket_t *s, int rpwait) {
-  s->io.rpwait = rpwait;
+void cosmic_socket_set_rpwait(cosmic_io_t *s, int rpwait) {
+  s->rpwait = rpwait;
 }
 
-void cosmic_socket_set_wpwait(cosmic_socket_t *s, int wpwait) {
-  s->io.wpwait = wpwait;
+void cosmic_socket_set_wpwait(cosmic_io_t *s, int wpwait) {
+  s->wpwait = wpwait;
 }
-
-cosmic_io_t *cosmic_socket_get_io(cosmic_socket_t *s) { return &s->io; }
 
 #ifdef _WIN32
-SOCKET cosmic_socket_get_fd(cosmic_socket_t *s) { return s->io.fd; }
+SOCKET cosmic_socket_get_fd(cosmic_io_t *s) { return s->fd; }
 #else
-int cosmic_socket_get_fd(cosmic_socket_t *s) { return s->io.fd; }
+int cosmic_socket_get_fd(cosmic_io_t *s) { return s->fd; }
 #endif

@@ -7,7 +7,7 @@ void test_connect() {
   const char *get = "GET /\r\n\r\n";
   char buf[1024];
   ssize_t i;
-  cosmic_socket_t *s = cosmic_socket_new();
+  cosmic_io_t *s = cosmic_socket_new();
   cosmic_socket_set_nonblock(s, 1);
   if (cosmic_socket_connect_to_host(s, "google.com", "http") < 0) {
 #ifdef _WIN32
@@ -27,9 +27,9 @@ void test_connect() {
   /* Set poll wait for read */
   cosmic_socket_set_rpwait(s, 1000);
 
-  assert(cosmic_socket_write(s, get, strlen(get)) > 0);
+  assert(cosmic_io_write(s, get, strlen(get)) > 0);
 
-  while ((i = cosmic_socket_read(s, buf, 1023)) > 0) {
+  while ((i = cosmic_io_read(s, buf, 1023)) > 0) {
     *(buf + i) = 0;
     printf("%ld\n", (long)i);
   }
@@ -38,9 +38,8 @@ void test_connect() {
 }
 
 void test_socket_pair() {
-  cosmic_socket_t *master = cosmic_socket_new();
-  cosmic_socket_t *server = NULL, *client = NULL;
-  cosmic_io_t *sio, *cio;
+  cosmic_io_t *master = cosmic_socket_new();
+  cosmic_io_t *server = NULL, *client = NULL;
   ssize_t i;
 
   struct sockaddr_in addr;
@@ -80,17 +79,14 @@ void test_socket_pair() {
   }
 
   /* Close master */
-  i = cosmic_socket_close(master);
+  i = cosmic_io_close(master);
   printf("Close %ld\n", (long)i);
 
-  sio = cosmic_socket_get_io(server);
-  cio = cosmic_socket_get_io(client);
-
-  i = cosmic_io_write(sio, "test", 4);
+  i = cosmic_io_write(server, "test", 4);
   assert(i > 0);
   printf("Wrote %ld\n", (long)i);
 
-  i = cosmic_io_read(cio, buf, 1023);
+  i = cosmic_io_read(client, buf, 1023);
   assert(i > 0);
   *(buf + i) = 0;
   printf("Recieved %ld - %s\n", (long)i, buf);
@@ -103,7 +99,7 @@ void test_socket_pair() {
 }
 
 void test_bind() {
-  cosmic_socket_t *m1 = cosmic_socket_new(), *m2 = cosmic_socket_new();
+  cosmic_io_t *m1 = cosmic_socket_new(), *m2 = cosmic_socket_new();
 
   if (cosmic_socket_bind_to_host(m1, "localhost", "8080") < 0) {
     perror("Bind failed");
@@ -116,7 +112,7 @@ void test_bind() {
   printf("WSA Error %d\n", WSAGetLastError());
 #endif
 
-  cosmic_socket_close(m1);
+  cosmic_io_close(m1);
 
   assert(cosmic_socket_bind_to_host(m2, "localhost", "8080") >= 0);
 
