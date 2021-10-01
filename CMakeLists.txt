@@ -73,15 +73,18 @@ add_test(NAME TEST_COSMIC_JSON_WRITE COMMAND test_cosmic_json_write)
 add_test(NAME TEST_COSMIC_JSON_READ COMMAND test_cosmic_json_read)
 add_test(NAME TEST_COSMIC_SOCKET COMMAND test_cosmic_socket)
 
-# install(
-#     TARGETS ${cosmic_targets}
-#     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-#     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-#     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-#     INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-# )
 
-# install(FILES ${COSMIC_PUBLIC_HEADERS} DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/cosmic")
-# install (FILES "${CMAKE_CURRENT_BINARY_DIR}/libcosmic.pc" DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig")
+if (NOT SKIP_INSTALL_ALL)
+    install(
+        TARGETS ${cosmic_targets}
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+    )
 
-# add_custom_target(uninstall "${CMAKE_COMMAND}" -P "${CMAKE_CURRENT_SOURCE_DIR}/library_config/uninstall.cmake")
+    install(FILES ${COSMIC_PUBLIC_HEADERS} DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/cosmic")
+    install (FILES "${CMAKE_CURRENT_BINARY_DIR}/libcosmic.pc" DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig")
+
+    add_custom_target(uninstall "${CMAKE_COMMAND}" -P "${CMAKE_CURRENT_SOURCE_DIR}/library_config/uninstall.cmake")
+endif()
