@@ -34,7 +34,7 @@ size_t cosmic_llist_size(const cosmic_list_t *l) { return l->len; }
 struct cosmic_llist_node *cosmic_llist_get_node(const cosmic_list_t *l,
                                                 size_t i) {
   struct cosmic_llist_node *n = l->head;
-  if (i > l->len) {
+  if (i >= l->len) {
     return NULL;
   }
 

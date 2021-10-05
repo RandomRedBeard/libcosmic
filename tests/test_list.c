@@ -129,5 +129,7 @@ int main() {
   test_get();
   test_insert();
   test_remove();
+  test_iterator();
+  test_pop();
   return 0;
 }
