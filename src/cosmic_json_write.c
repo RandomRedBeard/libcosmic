@@ -10,11 +10,11 @@ struct cosmic_json_write_st {
  * Writer functions
  */
 
-int cosmic_json_wr_enter(struct cosmic_json_write_st *wr) {
+size_t cosmic_json_wr_enter(struct cosmic_json_write_st *wr) {
   return ++wr->idepth;
 }
 
-int cosmic_json_wr_exit(struct cosmic_json_write_st *wr) {
+size_t cosmic_json_wr_exit(struct cosmic_json_write_st *wr) {
   return --wr->idepth;
 }
 
