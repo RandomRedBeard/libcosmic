@@ -50,6 +50,7 @@ configure_file("${CMAKE_CURRENT_SOURCE_DIR}/library_config/libcosmic.pc.in"
     "${CMAKE_CURRENT_BINARY_DIR}/libcosmic.pc" @ONLY)
 
 add_executable(test_cosmic_list tests/test_list.c)
+add_executable(test_cosmic_vector tests/test_vector.c)
 add_executable(test_cosmic_map tests/test_map.c)
 add_executable(test_cosmic_io_mem tests/test_io_mem.c)
 add_executable(test_cosmic_json tests/test_json.c)
@@ -58,6 +59,7 @@ add_executable(test_cosmic_json_read tests/test_json_read.c)
 add_executable(test_cosmic_socket tests/test_socket.c)
 
 target_link_libraries(test_cosmic_list ${COSMIC_LIBRARY})
+target_link_libraries(test_cosmic_vector ${COSMIC_LIBRARY})
 target_link_libraries(test_cosmic_map ${COSMIC_LIBRARY})
 target_link_libraries(test_cosmic_io_mem ${COSMIC_LIBRARY})
 target_link_libraries(test_cosmic_json ${COSMIC_LIBRARY})
@@ -66,6 +68,7 @@ target_link_libraries(test_cosmic_json_read ${COSMIC_LIBRARY})
 target_link_libraries(test_cosmic_socket ${COSMIC_LIBRARY})
 
 add_test(NAME TEST_COSMIC_LIST COMMAND test_cosmic_list)
+add_test(NAME TEST_COSMIC_VECTOR COMMAND test_cosmic_vector)
 add_test(NAME TEST_COSMIC_MAP COMMAND test_cosmic_map)
 add_test(NAME TEST_COSMIC_IO_MEM COMMAND test_cosmic_io_mem)
 add_test(NAME TEST_COSMIC_JSON COMMAND test_cosmic_json)

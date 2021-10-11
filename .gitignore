@@ -53,4 +53,8 @@ dkms.conf
 
 .DS_Store
 .vscode
+
+# VM Cmake build dir
 build
+cbuild
+wbuild

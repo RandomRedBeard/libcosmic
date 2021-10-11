@@ -50,7 +50,6 @@ int cosmic_llist_get(const cosmic_list_t *l, size_t i, cosmic_any_t *o) {
   if (!n) {
     return -1;
   }
-
   *o = n->o;
   return 0;
 }

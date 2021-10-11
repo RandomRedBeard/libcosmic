@@ -136,8 +136,6 @@ void test_iterator() {
   free(pp);
 }
 
-#include <stdlib.h>
-
 int main() {
   test_size();
   test_get();

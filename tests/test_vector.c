@@ -1,5 +1,5 @@
 #include "test_base.h"
-#include <cosmic/cosmic_llist.h>
+#include <cosmic/cosmic_vector.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -33,7 +33,7 @@ void pop_and_check(cosmic_list_t *l, const char *c) {
 }
 
 void test_get() {
-  cosmic_list_t *l = cosmic_llist_new();
+  cosmic_list_t *l = cosmic_vector_new(10);
   cosmic_list_add(l, cany_str("thomas"));
   cosmic_list_add(l, cany_str("thomas1"));
 
@@ -41,11 +41,11 @@ void test_get() {
 
   get_and_check(l, 1, "thomas1");
 
-  cosmic_llist_free(l, cany_free);
+  cosmic_vector_free(l, cany_free);
 }
 
 void test_insert() {
-  cosmic_list_t *l = cosmic_llist_new();
+  cosmic_list_t *l = cosmic_vector_new(10);
   cosmic_list_insert(l, 0, cany_str("thomas"));
 
   assert(cosmic_list_size(l) == 1);
@@ -61,11 +61,11 @@ void test_insert() {
 
   assert(cosmic_list_insert(l, 10, COSMIC_ANY("NO_ALLOC")) == -1);
 
-  cosmic_llist_free(l, cany_free);
+  cosmic_vector_free(l, cany_free);
 }
 
 void test_remove() {
-  cosmic_list_t *l = cosmic_llist_new();
+  cosmic_list_t *l = cosmic_vector_new(10);
 
   cosmic_list_add(l, cany_str("time1"));
   cosmic_list_add(l, cany_str("time2"));
@@ -81,11 +81,28 @@ void test_remove() {
 
   assert(cosmic_list_remove(l, 12, NULL) == -1);
 
-  cosmic_llist_free(l, cany_free);
+  cosmic_vector_free(l, cany_free);
+}
+
+void test_realloc() {
+  cosmic_list_t *l = cosmic_vector_new(5);
+  long i;
+
+  for (i = 0; i < 100; i++) {
+    assert(cosmic_list_add(l, COSMIC_ANY_L(i)) != -1);
+  }
+
+  assert(cosmic_list_get(l, 10, PCOSMIC_ANY(&i)) == 0);
+  assert(i == 10);
+
+  assert(cosmic_list_get(l, 10, PCOSMIC_ANY(&i)) == 0);
+  assert(i == 10);
+
+  cosmic_vector_free(l, NULL);
 }
 
 void test_pop() {
-  cosmic_list_t *l = cosmic_llist_new();
+  cosmic_list_t *l = cosmic_vector_new(10);
 
   cosmic_list_add(l, cany_str("time1"));
   cosmic_list_add(l, cany_str("time2"));
@@ -95,17 +112,17 @@ void test_pop() {
   pop_and_check(l, "time1");
   pop_and_check(l, "time2");
 
-  cosmic_llist_free(l, cany_free);
+  cosmic_vector_free(l, cany_free);
 
-  l = cosmic_llist_new();
+  l = cosmic_vector_new(10);
   assert(cosmic_list_pop(l, NULL) == -1);
 
-  cosmic_llist_free(l, NULL);
+  cosmic_vector_free(l, NULL);
 }
 
 void test_iterator() {
   cosmic_any_t o;
-  cosmic_list_t *l = cosmic_llist_new();
+  cosmic_list_t *l = cosmic_vector_new(10);
   cosmic_iterator_t *it = NULL;
 
   cosmic_list_add(l, cany_str("time1"));
@@ -122,14 +139,15 @@ void test_iterator() {
 
   cosmic_iterator_close(it);
 
-  cosmic_llist_free(l, cany_free);
+  cosmic_vector_free(l, cany_free);
 }
 
 int main() {
   test_get();
   test_insert();
-  test_iterator();
-  test_pop();
   test_remove();
+  test_realloc();
+  test_pop();
+  test_iterator();
   return 0;
 }

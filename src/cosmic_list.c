@@ -61,3 +61,20 @@ cosmic_iterator_t *cosmic_list_iterator(const cosmic_list_t *l) {
 
   return NULL;
 }
+
+cosmic_any_t cosmic_list_get_t(const cosmic_list_t *l, size_t index, int *r) {
+  int i;
+  cosmic_any_t o;
+
+  i = cosmic_list_get(l, index, &o);
+
+  if (i != 0) {
+    o = COSMIC_VOID;
+  }
+
+  if (r) {
+    *r = i;
+  }
+
+  return o;
+}

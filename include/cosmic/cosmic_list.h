@@ -22,6 +22,9 @@ COSMIC_DLL int cosmic_list_remove(cosmic_list_t *, size_t, cosmic_any_t *);
 COSMIC_DLL int cosmic_list_pop(cosmic_list_t *, cosmic_any_t *);
 COSMIC_DLL cosmic_iterator_t *cosmic_list_iterator(const cosmic_list_t *);
 
+COSMIC_DLL cosmic_any_t cosmic_list_get_t(const cosmic_list_t *, size_t, int *);
+#define cosmic_list_get_tt(l, i, t) (t) cosmic_list_get_t(l, i, NULL)
+
 #ifdef USING_NAMESPACE_COSMIC
 typedef cosmic_list_t list_t;
 typedef cosmic_list_dealloc list_dealloc;
