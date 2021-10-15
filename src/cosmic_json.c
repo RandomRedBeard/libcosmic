@@ -127,7 +127,7 @@ ssize_t cosmic_json_size(const cosmic_json_t *j) {
  * We'll do some type checks and return 0 for invalid
  */
 
-double cosmic_json_get_number(const cosmic_json_t *j) {
+CDOUBLE cosmic_json_get_number(const cosmic_json_t *j) {
   return j->type == COSMIC_NUMBER ? j->o.d : 0;
 }
 
@@ -135,7 +135,7 @@ const char *cosmic_json_get_string(const cosmic_json_t *j) {
   return j->type == COSMIC_STRING ? j->o.cp : NULL;
 }
 
-long cosmic_json_get_bool(const cosmic_json_t *j) {
+CLONG cosmic_json_get_bool(const cosmic_json_t *j) {
   return j->type == COSMIC_BOOL ? j->o.l : 0;
 }
 
@@ -168,7 +168,7 @@ const cosmic_json_t *cosmic_json_get_object_value(const cosmic_json_t *root,
   return v;
 }
 
-double cosmic_json_get_object_value_n(const cosmic_json_t *root,
+CDOUBLE cosmic_json_get_object_value_n(const cosmic_json_t *root,
                                       const char *k) {
   const cosmic_json_t *j = cosmic_json_get_object_value(root, k);
   return j ? cosmic_json_get_number(j) : 0;
@@ -180,7 +180,7 @@ const char *cosmic_json_get_object_value_s(const cosmic_json_t *root,
   return j ? cosmic_json_get_string(j) : NULL;
 }
 
-long cosmic_json_get_object_value_b(const cosmic_json_t *root, const char *k) {
+CLONG cosmic_json_get_object_value_b(const cosmic_json_t *root, const char *k) {
   const cosmic_json_t *j = cosmic_json_get_object_value(root, k);
   return j ? cosmic_json_get_bool(j) : 0;
 }
@@ -204,7 +204,7 @@ const cosmic_json_t *cosmic_json_get_list_value(const cosmic_json_t *root,
  * Set raw type
  */
 
-int cosmic_json_set_number(cosmic_json_t *j, double d) {
+int cosmic_json_set_number(cosmic_json_t *j, CDOUBLE d) {
   if (j->type != COSMIC_NUMBER) {
     return -1;
   }
@@ -223,7 +223,7 @@ int cosmic_json_set_string(cosmic_json_t *j, const char *c) {
   return 0;
 }
 
-int cosmic_json_set_bool(cosmic_json_t *j, long l) {
+int cosmic_json_set_bool(cosmic_json_t *j, CLONG l) {
   if (j->type != COSMIC_BOOL) {
     return -1;
   }
@@ -248,7 +248,7 @@ cosmic_json_t *cosmic_json_new_null() {
   return cosmic_json_new(COSMIC_NULL, COSMIC_VOID);
 }
 
-cosmic_json_t *cosmic_json_new_number(double d) {
+cosmic_json_t *cosmic_json_new_number(CDOUBLE d) {
   return cosmic_json_new(COSMIC_NUMBER, COSMIC_ANY_D(d));
 }
 
@@ -256,7 +256,7 @@ cosmic_json_t *cosmic_json_new_string(const char *c) {
   return c ? cosmic_json_new(COSMIC_STRING, COSMIC_ANY(strdup(c))) : NULL;
 }
 
-cosmic_json_t *cosmic_json_new_bool(long l) {
+cosmic_json_t *cosmic_json_new_bool(CLONG l) {
   return cosmic_json_new(COSMIC_BOOL, COSMIC_ANY_L(l));
 }
 
@@ -370,7 +370,7 @@ ssize_t cosmic_json_add_kv(cosmic_json_t *root, const char *k,
   return cosmic_map_add(root->o.vp, COSMIC_ANY(strdup(k)), COSMIC_ANY(v));
 }
 
-ssize_t cosmic_json_add_kv_n(cosmic_json_t *root, const char *k, double d) {
+ssize_t cosmic_json_add_kv_n(cosmic_json_t *root, const char *k, CDOUBLE d) {
   cosmic_json_t *j = cosmic_json_new_number(d);
   ssize_t i = cosmic_json_add_kv(root, k, j);
   if (i < 0) {
@@ -389,7 +389,7 @@ ssize_t cosmic_json_add_kv_s(cosmic_json_t *root, const char *k,
   return i;
 }
 
-ssize_t cosmic_json_add_kv_b(cosmic_json_t *root, const char *k, long l) {
+ssize_t cosmic_json_add_kv_b(cosmic_json_t *root, const char *k, CLONG l) {
   cosmic_json_t *j = cosmic_json_new_bool(l);
   ssize_t i = cosmic_json_add_kv(root, k, j);
   if (i < 0) {

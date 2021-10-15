@@ -86,7 +86,7 @@ void test_remove() {
 
 void test_realloc() {
   cosmic_list_t *l = cosmic_vector_new(5);
-  long i;
+  CLONG i;
 
   for (i = 0; i < 100; i++) {
     assert(cosmic_list_add(l, COSMIC_ANY_L(i)) != -1);
