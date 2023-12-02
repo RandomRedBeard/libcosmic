@@ -6,8 +6,6 @@ void test_any() {
     unsigned int l = 120;
     cosmic_any_t o = COSMIC_ANY_L(l);
     assert(l == o.l);
-
-    printf("%d - %lld\n", l, o.l);
 }
 
 int main() {

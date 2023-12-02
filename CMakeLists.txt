@@ -7,23 +7,30 @@ include(CTest)
 find_program(MEMORYCHECK_COMMAND valgrind)
 set(MEMORYCHECK_COMMAND_OPTIONS "--leak-check=full --show-leak-kinds=all")
 
-if (MSVC)
-    add_compile_options(/W4 /WX)
-else()
-    # Allow posix system calls for socket
-    add_definitions(-D_POSIX_C_SOURCE)
-    add_compile_options(-Wall -Wextra -pedantic -Werror -ansi)
-endif()
-
 file(GLOB COSMIC_SOURCE src/*.c)
 file(GLOB COSMIC_PUBLIC_HEADERS include/cosmic/*.h)
 
 set(cosmic_targets)
 add_library(cosmic SHARED ${COSMIC_SOURCE})
 target_compile_definitions(cosmic PUBLIC COSMIC_DLL_EXPORT)
+
+if (MSVC)
+    target_compile_options(cosmic PRIVATE /W4 /WX)
+else()
+    # Allow posix system calls for socket
+    target_compile_definitions(cosmic PRIVATE -D_POSIX_C_SOURCE)
+    target_compile_options(cosmic PRIVATE -Wall -Wextra -pedantic -Werror -ansi)
+endif()
+
 target_include_directories(cosmic PUBLIC
  $<INSTALL_INTERFACE:include>
  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+)
+
+# Big shoutout to mac
+set_target_properties(cosmic
+    PROPERTIES
+    PUBLIC_HEADER "${COSMIC_PUBLIC_HEADERS}"
 )
 
 # Which lib to link against (default to shared)
