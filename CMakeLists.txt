@@ -18,7 +18,7 @@ if (MSVC)
     target_compile_options(cosmic PRIVATE /W4 /WX)
 else()
     # Allow posix system calls for socket
-    target_compile_definitions(cosmic PRIVATE -D_POSIX_C_SOURCE)
+    # target_compile_definitions(cosmic PRIVATE -D_POSIX_C_SOURCE)
     target_compile_options(cosmic PRIVATE -Wall -Wextra -pedantic -Werror -std=c99)
 endif()
 
