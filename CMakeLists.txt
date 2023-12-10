@@ -27,7 +27,7 @@ target_include_directories(cosmic PUBLIC
  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
 )
 
-# Big shoutout to mac
+# Required for all apparently
 set_target_properties(cosmic
     PROPERTIES
     PUBLIC_HEADER "${COSMIC_INCLUDE_DIRS}"
