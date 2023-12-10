@@ -8,7 +8,7 @@ find_program(MEMORYCHECK_COMMAND valgrind)
 set(MEMORYCHECK_COMMAND_OPTIONS "--leak-check=full --show-leak-kinds=all")
 
 file(GLOB COSMIC_SOURCE src/*.c)
-file(GLOB COSMIC_PUBLIC_HEADERS include/cosmic/*.h)
+file(GLOB COSMIC_INCLUDE_DIRS include/cosmic/*.h)
 
 set(cosmic_targets)
 add_library(cosmic SHARED ${COSMIC_SOURCE})
@@ -18,7 +18,7 @@ if (MSVC)
     target_compile_options(cosmic PRIVATE /W4 /WX)
 else()
     # Allow posix system calls for socket
-    target_compile_definitions(cosmic PRIVATE -D_POSIX_C_SOURCE)
+    # target_compile_definitions(cosmic PRIVATE -D_POSIX_C_SOURCE)
     target_compile_options(cosmic PRIVATE -Wall -Wextra -pedantic -Werror -ansi)
 endif()
 
@@ -30,7 +30,7 @@ target_include_directories(cosmic PUBLIC
 # Big shoutout to mac
 set_target_properties(cosmic
     PROPERTIES
-    PUBLIC_HEADER "${COSMIC_PUBLIC_HEADERS}"
+    PUBLIC_HEADER "${COSMIC_INCLUDE_DIRS}"
 )
 
 # Which lib to link against (default to shared)
@@ -44,7 +44,7 @@ foreach(file ${files})
     add_executable(${tname} ${file})
     target_link_libraries(${tname} ${COSMIC_LIBRARY})
     target_include_directories(${tname} PUBLIC
-        $<BUILD_INTERFACE:${COSMIC_PUBLIC_HEADERS}>
+        $<BUILD_INTERFACE:${COSMIC_INCLUDE_DIRS}>
      )
     add_test(NAME ${tname} COMMAND ${tname})
 endforeach()
@@ -56,3 +56,5 @@ install(
 )
 
 install(EXPORT cosmic_targets FILE cosmicConfig.cmake DESTINATION lib/cosmic)
+
+add_custom_target(uninstall "${CMAKE_COMMAND}" -P "${CMAKE_CURRENT_SOURCE_DIR}/library_config/uninstall.cmake")

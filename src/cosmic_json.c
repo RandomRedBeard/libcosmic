@@ -260,9 +260,13 @@ cosmic_json_t *cosmic_json_new_bool(CLONG l) {
   return cosmic_json_new(COSMIC_BOOL, COSMIC_ANY_L(l));
 }
 
+int cosmic_json_key_cmp(const cosmic_any_t o1, const cosmic_any_t o2) {
+  return strcmp(o1.cp, o2.cp);
+}
+
 cosmic_json_t *cosmic_json_new_object() {
   return cosmic_json_new(COSMIC_OBJECT,
-                         COSMIC_ANY(cosmic_dmap_new((cosmic_cmp)strcmp)));
+                         COSMIC_ANY(cosmic_dmap_new(cosmic_json_key_cmp)));
 }
 
 cosmic_json_t *cosmic_json_new_list() {
