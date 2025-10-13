@@ -43,9 +43,6 @@ foreach(file ${files})
     get_filename_component(tname ${file} NAME_WLE)
     add_executable(${tname} ${file})
     target_link_libraries(${tname} ${COSMIC_LIBRARY})
-    target_include_directories(${tname} PUBLIC
-        $<BUILD_INTERFACE:${COSMIC_INCLUDE_DIRS}>
-     )
     add_test(NAME ${tname} COMMAND ${tname})
 endforeach()
 
