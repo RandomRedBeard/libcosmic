@@ -90,8 +90,7 @@ void test_special_char() {
   assert(cosmic_json_get_error_code(j) == COSMIC_NONE);
   child = cosmic_json_get_object_value(j, "key\n");
   assert(child);
-  assert(strcmp(cosmic_json_get_string(child), "value\ra") == 0);
-  puts(cosmic_json_get_string(child));
+  assert(strcmp("value\ra", cosmic_json_get_string(child)) == 0);
   cosmic_json_free(j);
 }
 

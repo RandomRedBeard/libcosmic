@@ -19,30 +19,30 @@ size_t cosmic_json_wr_exit(struct cosmic_json_write_st *wr) {
 }
 
 ssize_t cosmic_json_write_value(const cosmic_json_t *,
-                                struct cosmic_json_write_st);
+                                struct cosmic_json_write_st*);
 
-ssize_t cosmic_json_write_newline(struct cosmic_json_write_st wr) {
-  if (!wr.indent) {
+ssize_t cosmic_json_write_newline(struct cosmic_json_write_st* wr) {
+  if (!wr->indent) {
     return 0;
   }
 
-  return cosmic_io_write(wr.io, "\n", 1);
+  return cosmic_io_write(wr->io, "\n", 1);
 }
 
-ssize_t cosmic_json_write_indent(struct cosmic_json_write_st wr) {
+ssize_t cosmic_json_write_indent(struct cosmic_json_write_st* wr) {
   size_t i, ilen;
-  if (!wr.indent) {
+  if (!wr->indent) {
     return 0;
   }
 
-  ilen = strlen(wr.indent);
-  for (i = 0; i < wr.idepth; i++) {
-    if (cosmic_io_write(wr.io, wr.indent, ilen) <= 0) {
+  ilen = strlen(wr->indent);
+  for (i = 0; i < wr->idepth; i++) {
+    if (cosmic_io_write(wr->io, wr->indent, ilen) <= 0) {
       return -1;
     }
   }
 
-  return wr.idepth * ilen;
+  return wr->idepth * ilen;
 }
 
 ssize_t cosmic_json_write_comma(cosmic_io_t *io, cosmic_iterator_t *it) {
@@ -52,11 +52,11 @@ ssize_t cosmic_json_write_comma(cosmic_io_t *io, cosmic_iterator_t *it) {
   return 0;
 }
 
-ssize_t cosmic_json_write_colon(struct cosmic_json_write_st wr) {
-  if (wr.indent) {
-    return cosmic_io_write(wr.io, ": ", 2);
+ssize_t cosmic_json_write_colon(struct cosmic_json_write_st* wr) {
+  if (wr->indent) {
+    return cosmic_io_write(wr->io, ": ", 2);
   }
-  return cosmic_io_write(wr.io, ":", 1);
+  return cosmic_io_write(wr->io, ":", 1);
 }
 
 ssize_t cosmic_json_write_null(cosmic_io_t *io) {
@@ -129,20 +129,20 @@ ssize_t cosmic_json_write_bool(const cosmic_json_t *j, cosmic_io_t *io) {
 }
 
 ssize_t cosmic_json_write_object(const cosmic_json_t *obj,
-                                 struct cosmic_json_write_st wr) {
+                                 struct cosmic_json_write_st* wr) {
   cosmic_pair_t p;
   cosmic_iterator_t *it = NULL;
   ssize_t i = 0, j;
 
   if (cosmic_json_size(obj) == 0) {
-    return cosmic_io_write(wr.io, "{}", 2);
+    return cosmic_io_write(wr->io, "{}", 2);
   }
 
-  if ((j = cosmic_io_write(wr.io, "{", 1)) <= 0) {
+  if ((j = cosmic_io_write(wr->io, "{", 1)) <= 0) {
     return -1;
   }
 
-  cosmic_json_wr_enter(&wr);
+  cosmic_json_wr_enter(wr);
 
   i += j;
 
@@ -166,7 +166,7 @@ ssize_t cosmic_json_write_object(const cosmic_json_t *obj,
 
     i += j;
 
-    if ((j = cosmic_json_write_string(p.k.vp, wr.io)) <= 0) {
+    if ((j = cosmic_json_write_string(p.k.vp, wr->io)) <= 0) {
       cosmic_iterator_close(it);
       return -1;
     }
@@ -187,7 +187,7 @@ ssize_t cosmic_json_write_object(const cosmic_json_t *obj,
 
     i += j;
 
-    if ((j = cosmic_json_write_comma(wr.io, it)) < 0) {
+    if ((j = cosmic_json_write_comma(wr->io, it)) < 0) {
       cosmic_iterator_close(it);
       return -1;
     }
@@ -202,7 +202,7 @@ ssize_t cosmic_json_write_object(const cosmic_json_t *obj,
     i += j;
   }
 
-  cosmic_json_wr_exit(&wr);
+  cosmic_json_wr_exit(wr);
 
   if ((j = cosmic_json_write_indent(wr)) < 0) {
     return -1;
@@ -210,7 +210,7 @@ ssize_t cosmic_json_write_object(const cosmic_json_t *obj,
 
   i += j;
 
-  if ((j = cosmic_io_write(wr.io, "}", 1)) <= 0) {
+  if ((j = cosmic_io_write(wr->io, "}", 1)) <= 0) {
     return -1;
   }
 
@@ -218,20 +218,20 @@ ssize_t cosmic_json_write_object(const cosmic_json_t *obj,
 }
 
 ssize_t cosmic_json_write_list(const cosmic_json_t *list,
-                               struct cosmic_json_write_st wr) {
+                               struct cosmic_json_write_st* wr) {
   cosmic_any_t o;
   cosmic_iterator_t *it = NULL;
   ssize_t i = 0, j;
 
   if (cosmic_json_size(list) == 0) {
-    return cosmic_io_write(wr.io, "[]", 2);
+    return cosmic_io_write(wr->io, "[]", 2);
   }
 
-  if ((j = cosmic_io_write(wr.io, "[", 1)) <= 0) {
+  if ((j = cosmic_io_write(wr->io, "[", 1)) <= 0) {
     return -1;
   }
 
-  cosmic_json_wr_enter(&wr);
+  cosmic_json_wr_enter(wr);
 
   i += j;
 
@@ -262,7 +262,7 @@ ssize_t cosmic_json_write_list(const cosmic_json_t *list,
 
     i += j;
 
-    if ((j = cosmic_json_write_comma(wr.io, it)) < 0) {
+    if ((j = cosmic_json_write_comma(wr->io, it)) < 0) {
       cosmic_iterator_close(it);
       return -1;
     }
@@ -277,7 +277,7 @@ ssize_t cosmic_json_write_list(const cosmic_json_t *list,
     i += j;
   }
 
-  cosmic_json_wr_exit(&wr);
+  cosmic_json_wr_exit(wr);
 
   if ((j = cosmic_json_write_indent(wr)) < 0) {
     return -1;
@@ -285,7 +285,7 @@ ssize_t cosmic_json_write_list(const cosmic_json_t *list,
 
   i += j;
 
-  if ((j = cosmic_io_write(wr.io, "]", 1)) <= 0) {
+  if ((j = cosmic_io_write(wr->io, "]", 1)) <= 0) {
     return -1;
   }
 
@@ -293,16 +293,16 @@ ssize_t cosmic_json_write_list(const cosmic_json_t *list,
 }
 
 ssize_t cosmic_json_write_value(const cosmic_json_t *j,
-                                struct cosmic_json_write_st wr) {
+                                struct cosmic_json_write_st* wr) {
   switch (cosmic_json_get_type(j)) {
   case COSMIC_NULL:
-    return cosmic_json_write_null(wr.io);
+    return cosmic_json_write_null(wr->io);
   case COSMIC_NUMBER:
-    return cosmic_json_write_number(j, wr.io, wr.fprec);
+    return cosmic_json_write_number(j, wr->io, wr->fprec);
   case COSMIC_STRING:
-    return cosmic_json_write_json_string(j, wr.io);
+    return cosmic_json_write_json_string(j, wr->io);
   case COSMIC_BOOL:
-    return cosmic_json_write_bool(j, wr.io);
+    return cosmic_json_write_bool(j, wr->io);
   case COSMIC_OBJECT:
     return cosmic_json_write_object(j, wr);
   case COSMIC_LIST:
@@ -321,7 +321,7 @@ ssize_t cosmic_json_write_stream_s(const cosmic_json_t *j, cosmic_io_t *io,
   wr.indent = indent;
   wr.idepth = 0;
   wr.fprec = fprec;
-  return cosmic_json_write_value(j, wr);
+  return cosmic_json_write_value(j, &wr);
 }
 
 ssize_t cosmic_json_write_buffer_s(const cosmic_json_t *j, char *buf,
