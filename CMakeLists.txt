@@ -52,6 +52,6 @@ install(
     PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/cosmic
 )
 
-install(EXPORT cosmic_targets FILE cosmicConfig.cmake DESTINATION lib/cosmic)
+install(EXPORT cosmic_targets FILE cosmicConfig.cmake DESTINATION cmake)
 
 add_custom_target(uninstall "${CMAKE_COMMAND}" -P "${CMAKE_CURRENT_SOURCE_DIR}/library_config/uninstall.cmake")

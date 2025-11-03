@@ -94,6 +94,14 @@ void test_special_char() {
   cosmic_json_free(j);
 }
 
+void test_neg_int() {
+  char buf[] = "-123";
+  cosmic_json_t* j = cosmic_json_read_buffer(buf, sizeof(buf), 10);
+  assert(cosmic_json_get_type(j) == COSMIC_NUMBER);
+  assert(cosmic_json_get_number(j) == -123);
+  cosmic_json_free(j);
+}
+
 int main() {
   test_read_object_number_string();
   test_read_list();
@@ -102,5 +110,6 @@ int main() {
   test_depth_read();
   test_invalid_read_prim();
   test_special_char();
+  test_neg_int();
   return 0;
 }

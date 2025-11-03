@@ -4,7 +4,7 @@
 struct cosmic_json_read_st {
   cosmic_io_t *io;
   size_t depth, max_depth, sbuflen; /* Function depth */
-  cosmic_json_error_t *error;
+  cosmic_json_error_t error;
 };
 
 /**
@@ -34,14 +34,14 @@ ssize_t cosmic_json_seek_until(struct cosmic_json_read_st* rw, char *c,
     }
 
     if (!strchr(COSMIC_JSON_WHITESPACE, *c)) {
-      cosmic_json_error_ctor(rw->error, COSMIC_UNEXPECTED_CHAR, i + 1, __func__);
+      cosmic_json_error_ctor(&rw->error, COSMIC_UNEXPECTED_CHAR, i + 1, __func__);
       return -1;
     }
 
     i++;
   }
 
-  cosmic_json_error_ctor(rw->error, COSMIC_IO_ERROR, i, __func__);
+  cosmic_json_error_ctor(&rw->error, COSMIC_IO_ERROR, i, __func__);
   return -1;
 }
 
@@ -96,7 +96,7 @@ ssize_t cosmic_json_read_string(struct cosmic_json_read_st* rw, char *dest,
 
     /* Floating escape */
     if (escape) {
-      cosmic_json_error_ctor(rw->error, COSMIC_UNEXPECTED_CHAR, j, __func__);
+      cosmic_json_error_ctor(&rw->error, COSMIC_UNEXPECTED_CHAR, j, __func__);
       return -1;
     }
 
@@ -108,7 +108,7 @@ ssize_t cosmic_json_read_string(struct cosmic_json_read_st* rw, char *dest,
   }
 
   if (n <= 0) {
-    cosmic_json_error_ctor(rw->error, COSMIC_IO_ERROR, j, __func__);
+    cosmic_json_error_ctor(&rw->error, COSMIC_IO_ERROR, j, __func__);
     return -1;
   }
 
@@ -130,7 +130,7 @@ int cosmic_json_read_and_compare(struct cosmic_json_read_st* rw,
   while (*cmp && (n = cosmic_io_read(rw->io, &c, 1)) > 0) {
     len++;
     if (c != *cmp) {
-      cosmic_json_error_ctor(rw->error, COSMIC_UNEXPECTED_CHAR, len, __func__);
+      cosmic_json_error_ctor(&rw->error, COSMIC_UNEXPECTED_CHAR, len, __func__);
       return -1;
     }
 
@@ -138,7 +138,7 @@ int cosmic_json_read_and_compare(struct cosmic_json_read_st* rw,
   }
 
   if (n <= 0) {
-    cosmic_json_error_ctor(rw->error, COSMIC_IO_ERROR, len, __func__);
+    cosmic_json_error_ctor(&rw->error, COSMIC_IO_ERROR, len, __func__);
     return -1;
   }
 
@@ -192,7 +192,7 @@ ssize_t cosmic_json_read_number(struct cosmic_json_read_st* rw,
     if (h == '.' && !dec) {
       dec = h;
     } else if (h == '.') {
-      cosmic_json_error_ctor(rw->error, COSMIC_UNEXPECTED_CHAR, i, __func__);
+      cosmic_json_error_ctor(&rw->error, COSMIC_UNEXPECTED_CHAR, i, __func__);
       return -1;
     }
 
@@ -201,7 +201,7 @@ ssize_t cosmic_json_read_number(struct cosmic_json_read_st* rw,
      * We know this is invalid json (not number)
      */
     if (h == '-' && n != 0) {
-      cosmic_json_error_ctor(rw->error, COSMIC_UNEXPECTED_CHAR, i, __func__);
+      cosmic_json_error_ctor(&rw->error, COSMIC_UNEXPECTED_CHAR, i, __func__);
       return -1;
     }
 
@@ -214,7 +214,7 @@ ssize_t cosmic_json_read_number(struct cosmic_json_read_st* rw,
            (n = cosmic_io_read(rw->io, &h, 1)) > 0);
 
   if (n <= 0) {
-    cosmic_json_error_ctor(rw->error, COSMIC_IO_ERROR, i, __func__);
+    cosmic_json_error_ctor(&rw->error, COSMIC_IO_ERROR, i, __func__);
     return -1;
   }
 
@@ -223,7 +223,7 @@ ssize_t cosmic_json_read_number(struct cosmic_json_read_st* rw,
   d = strtod(buf, &rcheck);
   /* If we didn't read the entire string */
   if (*rcheck) {
-    cosmic_json_error_ctor(rw->error, COSMIC_UNEXPECTED_CHAR, rcheck - buf,
+    cosmic_json_error_ctor(&rw->error, COSMIC_UNEXPECTED_CHAR, rcheck - buf,
                            __func__);
     return -1;
   }
@@ -286,7 +286,7 @@ ssize_t cosmic_json_read_object(struct cosmic_json_read_st* rw,
   cosmic_json_t *tmp_j = NULL, *tmp_value = NULL;
 
   if (cosmic_json_rw_new_func(rw)) {
-    cosmic_json_error_ctor(rw->error, COSMIC_MAX_DEPTH_ERROR, 0, __func__);
+    cosmic_json_error_ctor(&rw->error, COSMIC_MAX_DEPTH_ERROR, 0, __func__);
     return -1;
   }
 
@@ -323,7 +323,7 @@ ssize_t cosmic_json_read_object(struct cosmic_json_read_st* rw,
     i += j + 1;
 
     /* Seek to some json value */
-    j = cosmic_json_seek_until(rw, &buf, "\"{[tfn-", 1);
+    j = cosmic_json_seek_until(rw, &buf, "\"{[tfn", 1);
     if (j < 0) {
       break;
     }
@@ -356,7 +356,7 @@ ssize_t cosmic_json_read_object(struct cosmic_json_read_st* rw,
       i += j + 1;
     } else if (overflow && !strchr(",}", overflow)) {
       j = -1;
-      cosmic_json_error_ctor(rw->error, COSMIC_UNEXPECTED_CHAR, 1, __func__);
+      cosmic_json_error_ctor(&rw->error, COSMIC_UNEXPECTED_CHAR, 1, __func__);
       break;
     } else if (overflow) {
       buf = overflow;
@@ -371,7 +371,7 @@ ssize_t cosmic_json_read_object(struct cosmic_json_read_st* rw,
   /* All read functions will return to j */
   if (j < 0) {
     cosmic_json_free(tmp_j);
-    rw->error->index += i;
+    rw->error.index += i;
     return -1;
   }
 
@@ -388,7 +388,7 @@ ssize_t cosmic_json_read_list(struct cosmic_json_read_st* rw,
   cosmic_json_t *tmp_list = NULL, *tmp_value = NULL;
 
   if (cosmic_json_rw_new_func(rw)) {
-    cosmic_json_error_ctor(rw->error, COSMIC_MAX_DEPTH_ERROR, 0, __func__);
+    cosmic_json_error_ctor(&rw->error, COSMIC_MAX_DEPTH_ERROR, 0, __func__);
     return -1;
   }
 
@@ -396,7 +396,7 @@ ssize_t cosmic_json_read_list(struct cosmic_json_read_st* rw,
 
   while (1) {
     overlfow = 0;
-    j = cosmic_json_seek_until(rw, &buf, "\"{[tfn-]", 1);
+    j = cosmic_json_seek_until(rw, &buf, "\"{[tfn]", 1);
     if (j < 0) {
       break;
     }
@@ -429,7 +429,7 @@ ssize_t cosmic_json_read_list(struct cosmic_json_read_st* rw,
       i += j + 1;
     } else if (overlfow && !strchr(",]", overlfow)) {
       j = -1;
-      cosmic_json_error_ctor(rw->error, COSMIC_UNEXPECTED_CHAR, 1, __func__);
+      cosmic_json_error_ctor(&rw->error, COSMIC_UNEXPECTED_CHAR, 1, __func__);
       break;
     } else if (overlfow) {
       buf = overlfow;
@@ -442,7 +442,7 @@ ssize_t cosmic_json_read_list(struct cosmic_json_read_st* rw,
 
   if (j < 0) {
     cosmic_json_free(tmp_list);
-    rw->error->index += i;
+    rw->error.index += i;
     return -1;
   }
 
@@ -479,14 +479,12 @@ cosmic_json_t *cosmic_json_read_stream_s(cosmic_io_t *io, size_t max_depth,
   ssize_t j;
   char buf, overflow = 0;
   cosmic_json_t *json = NULL;
-  cosmic_json_error_t error;
   struct cosmic_json_read_st rw;
 
-  error.error = COSMIC_NONE;
-  error.func_name = NULL;
-  error.index = -1;
+  rw.error.error = COSMIC_NONE;
+  rw.error.func_name = NULL;
+  rw.error.index = -1;
 
-  rw.error = &error;
   rw.io = io;
   rw.depth = 0;
   rw.max_depth = max_depth;
@@ -494,12 +492,12 @@ cosmic_json_t *cosmic_json_read_stream_s(cosmic_io_t *io, size_t max_depth,
 
   j = cosmic_json_seek_until(&rw, &buf, "\"{[tfn", 1);
   if (j < 0) {
-    return cosmic_json_error_new(error);
+    return cosmic_json_error_new(rw.error);
   }
 
   j = cosmic_json_read_value(&rw, &json, buf, &overflow);
   if (j < 0) {
-    return cosmic_json_error_new(error);
+    return cosmic_json_error_new(rw.error);
   }
 
   return json;
